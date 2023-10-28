@@ -26,7 +26,7 @@ bind_addr = "0.0.0.0:3000"
 
 [server.services.rimgo]
 type = "tcp"
-token = "redacted
+token = "redacted"
 bind_addr = "0.0.0.0:3001"
 
 [server.services.umami]
