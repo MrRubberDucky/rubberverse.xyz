@@ -1,0 +1,14 @@
+[Unit]
+Description=Velocity Minecraft Proxy
+
+[Service]
+WorkingDirectory=/var/lib/velocity
+ExecStart=/var/lib/temurin-17-jdk/bin/java -Xms1024M -Xmx1024M -XX:+UseG1GC -XX:G1HeapRegionSize=4M -XX:+UnlockExperimentalVMOptions -XX:+ParallelRefProcEnabled -XX:+AlwaysPreTouch -Dvelocity.packet-decode-logging=true -jar velocity.jar
+User=velocity
+Type=simple
+Restart=on-failure
+RestartSec=10
+# No graceful shutdown 'cus lazy + it's a proxy without a world to begin with so not really risking anything either way
+
+[Install]
+WantedBy=multi-user.target

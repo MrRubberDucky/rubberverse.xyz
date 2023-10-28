@@ -1,0 +1,227 @@
+# Caddyfile for Rubberverse - v1.0
+# Feel free to take inspiration from it if you feel like it, it's open for a reason
+# In case you have any questions, create Github Issue/or contact me via Discord/E-mail
+{
+	# Global Caddy configuration
+	http_port 80
+	https_port 443
+	admin off
+	email <redacted>
+	# Requires caddy-dns/cloudflare module in order to use. Can be built with xcaddy.
+	acme_dns cloudflare <redacted>
+}
+# Start of server block
+uptime.rubberverse.xyz {
+	reverse_proxy localhost:3200
+	log {
+		# We want to log some services, that's why you see me define this stuff here
+		# They're all watched by Crowdsec
+		output file /var/log/caddy/kuma.log {
+			roll_size 100M
+			roll_uncompressed
+			roll_keep_for 3d
+		}
+	}
+}
+# We moved to blog.rubberverse.xyz, that's why I'm doing a permanent redirect on rubberverse.xyz to the new subdomain :)
+rubberverse.xyz {
+        redir https://blog.rubberverse.xyz{uri} permanent
+}
+www.rubberverse.xyz {
+        redir https://blog.rubberverse.xyz{uri} permanent
+}
+blog.rubberverse.xyz {
+	reverse_proxy localhost:3100
+	header Access-Control-Allow-Origin https://analytics.rubberverse.xyz, https://rubberverse.xyz https://blog.rubberverse.xyz {
+		defer
+	}
+    header * {
+		+Content-Security-Policy "default-src 'self' blob: data: https://www.youtube-nocookie.com; font-src 'self'; img-src 'self' https://rubberverse.xyz https://blog.rubberverse.xyz data: blob: https://*.rubberverse.xyz; style-src 'self' 'unsafe-inline'; script-src 'self' blob: https://www.youtube-nocookie.com https://analytics.rubberverse.xyz; connect-src 'self' https://analytics.rubberverse.xyz; upgrade-insecure-requests; block-all-mixed-content;"
+		+Cross-Origin-Embedder-Policy "require-corp"
+		+Cross-Origin-Opener-Policy "same-origin-allow-popups"
+		+Cross-Origin-Resource-Policy "cross-origin"
+		+Permissions-Policy "interest_cohort=() cross-origin-isolated=(self)"
+		+Strict-Transport-Security max-age=63072000;
+		+X-Content-Type-Options nosniff
+		+X-Frame-Options SAMEORIGIN
+		+X-XSS-Protection "0"
+	}
+	@static {
+		file
+		path *.css *.ico *.gif *.jpg *.jpeg *.png *.svg *.woff
+		path /includes/*
+		path /uploads/*
+	}
+	handle @static {
+		header Cache-Control "public, max-age=63072000; must-revalidate"
+	}
+	# We don't want to cache those because well, it breaks these things.
+	@nocache {
+		path /admin/*
+		path /comment/*
+		path /feed/
+		path /control/
+		path /archive/
+	}
+	handle @nocache {
+		header Cache-Control "no-cache; no-store; must-revalidate"
+	}
+	encode zstd gzip
+	# This TLS entry is to request a certificate from Cloudflare DNS directly, otherwise it will request a certificate from Let's Encrypt
+	# As to why I need it, well Discord for some reason refuses to embed anything if it has Let's Encrypt certificate, even though it worked fine before.
+        tls <redacted> {
+            dns cloudflare <redacted>
+        }
+	log {
+		output file /var/log/caddy/blog.log {
+			roll_size 100M
+			roll_uncompressed
+			roll_keep_for 3d
+		}
+	}
+}
+search.rubberverse.xyz {
+	reverse_proxy localhost:3000
+	@static {
+		path *.css *.js *.ico
+	}
+	@no_cache {
+		path /search*
+	}
+	handle @static {
+		header Cache-Control "public, max-age=63072000; must-revalidate"
+	}
+	handle @no_cache {
+		header Cache-Control "no-cache; no-store"
+	}
+	encode zstd gzip
+	log {
+		output discard
+	}
+}
+# Will eventually be up again
+#searxng.rubberverse.xyz {
+#	header * {
+#		+Access-Control-Allow-Policy "https://searxng.rubberverse.xyz"
+#		+Cross-Origin-Embedder-Policy "credentialless"
+#		+Cross-Origin-Opener-Policy "same-origin-allow-popups"
+#		+Cross-Origin-Resource-Policy "cross-origin"
+#		+Strict-Transport-Security max-age=63072000;
+#		+X-Frame-Options SAMEORIGIN
+#	}
+#   # Experimental CSP, defer makes it replace/overwrite/whatever the current Content-Security-Policy that comes from SearXNG itself
+#	header Content-Security-Policy "default-src 'self' blob: data: https://www.youtube-nocookie.com; font-src 'self'; img-src 'self' blob: data: https://*.rubberverse.xyz; style-src 'self' 'unsafe-inline'; script-src 'self' blob: https://www.youtube-nocookie.com; connect-src 'self'; upgrade-insecure-requests; block-all-mixed-content;" {
+#		defer
+#	}
+#	header Permissions-Policy "interest_cohort=() cross-origin-isolated=(self)" {
+#		defer
+#	}
+#	header X-XSS-Protection "0" {
+#		defer
+#	}
+#	@static {
+#		path *.css *.js *.ico
+#	}
+#	@no_cache {
+#		path /*/search*
+#		path /*/stats
+#		path /*/preferences
+#	}
+#	handle @static {
+#		header Cache-Control "public, max-age=63072000; must-revalidate"
+#	}
+#	handle @no_cache {
+#		header Cache-Control "no-cache; no-store; must-revalidate"
+#	}
+#	encode zstd gzip
+#	reverse_proxy localhost:3002
+#	log {
+#		output discard
+#	}
+#}
+rimgo.rubberverse.xyz {
+	reverse_proxy localhost:3001
+	@static {
+		path *.js *.css
+	}
+	header @static {
+		header Cache-Control "public, max-age=63072000; must-revalidate"
+	}
+	header * {
+		+Access-Control-Allow-Policy "https://rimgo.rubberverse.xyz"
+		+Cross-Origin-Embedder-Policy "credentialless"
+		+Cross-Origin-Opener-Policy "same-origin-allow-popups"
+		+Cross-Origin-Resource-Policy "cross-origin"
+		+X-XSS-Protection "0"
+	}
+	log {
+		# Since this is a privacy-focused service, logging is disabled from it.
+		output discard
+	}
+}
+analytics.rubberverse.xyz {
+	reverse_proxy localhost:3002
+	header Access-Control-Allow-Origin https://rubberverse.xyz, https://blog.rubberverse.xyz https://analytics.rubberverse.xyz {
+		defer
+	}
+	# Needed otherwise Umami will have CORS-related problems
+	header Access-Control-Allow-Headers DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization {
+		defer
+	}
+	# Same as before but this time allowing methods and adding CORP so we can actually do something with it
+	header * {
+		+Access-Control-Allow-Methods "GET, POST, OPTIONS"
+		+Cross-Origin-Resource-Policy "cross-origin"
+	}
+	# Too many people were trying to bruteforce their way in so yeah, that's why it's logged lol....
+	log {
+		output file /var/log/caddy/analytics.log {
+			roll_size 100M
+			roll_uncompressed
+			roll_keep_for 3d
+		}
+	}
+}
+upload.rubberverse.xyz {
+	reverse_proxy localhost:3004
+	log {
+		output file /var/log/caddy/upload.log {
+			roll_size 100M
+			roll_uncompressed
+			roll_keep_for 3d
+		}
+	}
+}
+zipline.rubberverse.xyz {
+        reverse_proxy localhost:3003
+        tls <redacted> {
+              dns cloudflare <redacted>
+        }
+        log {
+                output file /var/log/caddy/zipline.log {
+                       roll_size 100M
+                       roll_uncompressed
+                       roll_keep_for 3d
+                }
+        }
+}
+# This doesn't wanna work for some reason, eventually i'll figure it out
+#freshrss.rubberverse.xyz {
+#        reverse_proxy localhost:3007
+#        log {
+#                output file /var/log/caddy/freshrss.log {
+#                       roll_size 100M
+#                       roll_uncompressed
+#                       roll_keep_for 3d
+#                }
+#        }
+#}
+# FastDL for source games, unused for now
+#files.rubberverse.xyz:80 {
+#      root * /etc/caddy/static/gamefiles
+#      file_server { 
+#      browse
+#      hide .* _*
+#      precompressed gzip
+#    }
+#}
