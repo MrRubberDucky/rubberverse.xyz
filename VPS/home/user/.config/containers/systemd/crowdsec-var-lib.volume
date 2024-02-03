@@ -1,0 +1,5 @@
+[Volume]
+Device=/home/user/.priv-data/crowdsec-var-lib
+Driver=local
+Options=bind,rw,type=none
+VolumeName=crowdsec-config
