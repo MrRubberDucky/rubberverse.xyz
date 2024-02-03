@@ -1,4 +1,3 @@
-# systemctl service
 [Unit]
 Description=Deploy QoR-Caddy Image
 
@@ -6,19 +5,33 @@ Description=Deploy QoR-Caddy Image
 Image=docker.io/mrrubberducky/qor-caddy:latest-alpine
 AutoUpdate=registry
 ContainerName=qor-caddy
-Network=quadlet-vps.network
-DNS=10.10.10.1
-EnvironmentFile=.qor-caddy
+
+Environment=CADDY_ENVIRONMENT=prod
+Environment=CONFIG_PATH=/app/configs/Caddyfile
+Environment=ADAPTER_TYPE=caddyfile
+
+Secret=letsencrypt_email,type=env,target=LETSENCRYPT_EMAIL
+Secret=cloudflare_dns_api_key,type=env,target=CLOUDFLARE_DNS
+Secret=crowdsec_bouncer_key,type=env,target=CROWDSEC_BOUNCER_KEY
+
 PublishPort=80:80
 PublishPort=443:443
-IP=10.10.10.2
+
 Sysctl=net.ipv4.ip_unprivileged_port_start=0
+
 LogDriver=journald
+
 User=caddy
-Volume=/home/user/AppData/qor-caddy/Caddyfile:/app/configs/Caddyfile
+
+Volume=/home/ducky/AppData/qor-caddy/Caddyfile:/app/configs/Caddyfile
 Volume=qor-appdata.volume:/app/.local/share/caddy
 Volume=qor-config.volume:/app/.config/caddy
 Volume=qor-logs:/app/logs
 
+Network=quadlet-vps.network
+IP=10.10.10.3
+DNS=10.10.10.1
+
 [Install]
 WantedBy=multi-user.target
+Before=crowdsec-daemon.container
