@@ -1,0 +1,26 @@
+[Unit]
+Description=Deploy rubberverse/frp Image
+
+[Container]
+Image=ghcr.io/rubberverse/qor-frp:latest-alpine
+AutoUpdate=registry
+ContainerName=qor-frps
+
+Environment=DEPLOYMENT_TYPE=server
+
+LogDriver=journald
+
+PublishPort=redacted
+PublishPort=redacted/udp
+
+Volume=/home/ducky/AppData/frps/frps.toml:/etc/frps.toml
+Volume=redacted:/etc/frps/certificates
+
+Network=quadlet-vps.network
+IP=10.10.10.4
+DNS=10.10.10.1
+
+[Install]
+WantedBy=multi-user.target
+Before=crowdsec-daemon.container
+Before=qor-caddy.container
