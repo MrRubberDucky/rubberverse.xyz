@@ -1,0 +1,7 @@
+# Storage persistence
+[Volume]
+# For some reason dotted repositories don't experience permission issues
+Device=/home/user/.priv-data/crowdsec-cfg
+Driver=local
+Options=bind,rw,type=none
+VolumeName=crowdsec-config
