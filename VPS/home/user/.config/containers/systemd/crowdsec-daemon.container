@@ -1,0 +1,44 @@
+# This is a Podman v4.4+ Quadlet file
+[Unit]
+Description=Deploy Crowdsec Image
+
+[Container]
+Image=docker.io/crowdsecurity/crowdsec:latest-debian
+AutoUpdate=registry
+
+ContainerName=crowdsec-daemon
+Network=quadlet-vps.network
+Environment=USE_WAL=true
+Environment=CUSTOM_HOSTNAME=container-lapi
+Environment=ENROLL_KEY=redacted
+Environment=ENROLL_INSTANCE_NAME=redacted
+Environment=ENROLL_TAGS=container
+Environment=LEVEL_INFO=true
+Environment=COLLECTIONS="crowdsecurity/caddy" "crowdsecurity/base-http-scenarios" "timokoessler/uptime-kuma" "crowdsecurity/discord-crawler-whitelist" "crowd>Environment=APPSEC_CONFIG" "crowdsecurity/crs"
+Environment=ENABLE_CONSOLE_MANAGEMENT=""
+PublishPort=8080:8080
+DNS=10.10.10.1
+IP=10.10.10.3
+
+LogDriver=journald
+
+# Hub, Data
+Volume=crowdsec-var-lib.volume:/var/lib/crowdsec/data
+# General Config
+Volume=crowdsec-etc.volume:/etc/crowdsec
+# Needs to be non-persistent in order to work
+Volume=crowdsec-usr-local:/usr/local/lib/crowdsec
+
+# My own configuration from long ago
+Volume=/home/user/AppData/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml
+Volume=/home/user/AppData/crowdsec/profiles.yaml:/etc/crowdsec/profiles.yaml
+Volume=/home/user/AppData/crowdsec/notifications/discord.yaml:/etc/crowdsec/notifications/discord.yaml
+Volume=/home/user/AppData/crowdsec/parsers/s01-parse/vpswhitelist.yaml:/etc/crowdsec/parsers/s01-parse/vpswhitelist.yaml
+
+# Mount volumes and host system things
+PodmanArgs=--mount "type=volume,src=uptime-kuma-logs,dst=/var/log/uptime-kuma,volume-opt=type=tmpfs,ro"
+PodmanArgs=--mount "type=volume,src=qor-logs,dst=/var/log/caddy,volume-opt=type=tmpfs,ro"
+PodmanArgs=--mount "type=bind,src=/var/log/journal,dst=/var/log/journal"
+
+[Install]
+WantedBy=multi-user.target
