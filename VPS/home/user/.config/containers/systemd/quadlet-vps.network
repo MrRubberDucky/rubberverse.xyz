@@ -2,5 +2,4 @@
 Subnet=10.10.10.0/24
 Gateway=10.10.10.1
 Driver=macvlan
-IPAMDriver=dhcp
 IPv6=true
