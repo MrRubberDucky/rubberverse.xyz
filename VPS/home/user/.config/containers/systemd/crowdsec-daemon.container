@@ -1,4 +1,3 @@
-# This is a Podman v4.4+ Quadlet file
 [Unit]
 Description=Deploy Crowdsec Image
 
@@ -6,19 +5,25 @@ Description=Deploy Crowdsec Image
 Image=docker.io/crowdsecurity/crowdsec:latest-debian
 AutoUpdate=registry
 
-ContainerName=crowdsec-daemon
-Network=quadlet-vps.network
+ContainerName=crowdsec-podman
+
 Environment=USE_WAL=true
 Environment=CUSTOM_HOSTNAME=container-lapi
-Environment=ENROLL_KEY=redacted
-Environment=ENROLL_INSTANCE_NAME=redacted
+
+Environment=ENROLL_INSTANCE_NAME=cont-qor-vps
 Environment=ENROLL_TAGS=container
+
 Environment=LEVEL_INFO=true
-Environment=COLLECTIONS="crowdsecurity/caddy" "crowdsecurity/base-http-scenarios" "timokoessler/uptime-kuma" "crowdsecurity/discord-crawler-whitelist" "crowd>Environment=APPSEC_CONFIG" "crowdsecurity/crs"
+Environment=COLLECTIONS="crowdsecurity/caddy" "crowdsecurity/base-http-scenarios" "timokoessler/uptime-kuma" "crowdsecurity/discord-crawler-whitelist" "crowdsecurity/whitelist-good-actors"
+Environment=APPSEC_CONFIGS="crowdsecurity/crs"
 Environment=ENABLE_CONSOLE_MANAGEMENT=""
+
+Secret=capi_crowdsec_key,type=env,target=ENROLL_KEY
 PublishPort=8080:8080
+
+Network=quadlet-vps.network
+IP=10.10.10.2
 DNS=10.10.10.1
-IP=10.10.10.3
 
 LogDriver=journald
 
@@ -30,10 +35,10 @@ Volume=crowdsec-etc.volume:/etc/crowdsec
 Volume=crowdsec-usr-local:/usr/local/lib/crowdsec
 
 # My own configuration from long ago
-Volume=/home/user/AppData/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml
-Volume=/home/user/AppData/crowdsec/profiles.yaml:/etc/crowdsec/profiles.yaml
-Volume=/home/user/AppData/crowdsec/notifications/discord.yaml:/etc/crowdsec/notifications/discord.yaml
-Volume=/home/user/AppData/crowdsec/parsers/s01-parse/vpswhitelist.yaml:/etc/crowdsec/parsers/s01-parse/vpswhitelist.yaml
+Volume=/home/ducky/AppData/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml
+Volume=/home/ducky/AppData/crowdsec/profiles.yaml:/etc/crowdsec/profiles.yaml
+Volume=/home/ducky/AppData/crowdsec/notifications/discord.yaml:/etc/crowdsec/notifications/discord.yaml
+Volume=/home/ducky/AppData/crowdsec/parsers/s01-parse/vpswhitelist.yaml:/etc/crowdsec/parsers/s01-parse/vpswhitelist.yaml
 
 # Mount volumes and host system things
 PodmanArgs=--mount "type=volume,src=uptime-kuma-logs,dst=/var/log/uptime-kuma,volume-opt=type=tmpfs,ro"
@@ -42,3 +47,5 @@ PodmanArgs=--mount "type=bind,src=/var/log/journal,dst=/var/log/journal"
 
 [Install]
 WantedBy=multi-user.target
+After=uptime-kuma.container
+After=qor-caddy.container
