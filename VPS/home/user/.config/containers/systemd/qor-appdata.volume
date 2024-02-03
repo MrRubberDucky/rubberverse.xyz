@@ -1,0 +1,5 @@
+[Volume]
+Device=/home/user/AppData/qor-caddy/app-data
+Driver=local
+Options=bind,rw,type=ext4
+VolumeName=qor-appdata
