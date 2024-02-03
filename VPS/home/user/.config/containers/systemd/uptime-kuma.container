@@ -1,0 +1,20 @@
+[Unit]
+Description=Deploy Uptime Kuma Image
+
+[Container]
+Image=docker.io/louislam/uptime-kuma:latest
+AutoUpdate=registry
+ContainerName=uptime-kuma
+Network=quadlet-vps.network
+DNS=10.10.10.1
+IP=10.10.10.4
+LogDriver=none
+# I'm reusing database from before for this
+Volume=/home/user/AppData/uptime-kuma/kuma.db:/app/data/kuma.db
+Volume=uptime-kuma-logs:/app/data/error.log
+Volume=uptime-kuma:/app/data/screenshots
+Volume=uptime-kuma:/app/data/docker-tls
+Volume=uptime-kuma:/app/data/upload
+
+[Install]
+WantedBy=multi-user.target
