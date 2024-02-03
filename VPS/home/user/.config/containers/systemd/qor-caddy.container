@@ -1,0 +1,24 @@
+# systemctl service
+[Unit]
+Description=Deploy QoR-Caddy Image
+
+[Container]
+Image=docker.io/mrrubberducky/qor-caddy:latest-alpine
+AutoUpdate=registry
+ContainerName=qor-caddy
+Network=quadlet-vps.network
+DNS=10.10.10.1
+EnvironmentFile=.qor-caddy
+PublishPort=80:80
+PublishPort=443:443
+IP=10.10.10.2
+Sysctl=net.ipv4.ip_unprivileged_port_start=0
+LogDriver=journald
+User=caddy
+Volume=/home/user/AppData/qor-caddy/Caddyfile:/app/configs/Caddyfile
+Volume=qor-appdata.volume:/app/.local/share/caddy
+Volume=qor-config.volume:/app/.config/caddy
+Volume=qor-logs:/app/logs
+
+[Install]
+WantedBy=multi-user.target
