@@ -1,0 +1,90 @@
+// Fun fact: This DHCP configuration runs on an ARM device (Android phone to be specific, via postmarketOS)
+{ "Dhcp4": 
+    {
+    "interfaces-config": {
+        "interfaces": ["eth0.10", "eth0.30", "eth0.50"],
+        "dhcp-socket-type": "raw"
+    },
+    "lease-database": {
+        "type": "memfile",
+        "lfc-interval": 3600
+    },
+    // Don't make use of duid or client-id but too lazy to change this
+    "host-reservation-identifiers": [ "hw-address", "duid", "client-id" ],
+    "subnet4": [
+        {
+            "pools": [ { "pool": "10.10.1.10-10.10.1.200" } ],
+            "id": 1,
+            "subnet": "10.10.1.0/24",
+            "interface": "eth0.10",
+            "reservations-global": false,
+            "reservations-in-subnet": true,
+            "reservations-out-of-pool": true,
+            "reservations": [
+                {
+                    "hostname": "<redacted>.rubberverse.internal",
+                    "hw-address": "<redacted>",
+                    "ip-address": "10.10.1.3"
+                },
+                {
+                    "hostname": "<redacted>.rubberverse.internal",
+                    "hw-address": "<redacted>",
+                    "ip-address": "10.10.1.40"
+                },
+                {
+                    "hostname": "<redacted>.rubberverse.internal",
+                    "hw-address": "<redacted>",
+                    "ip-address": "10.10.1.10"
+                }
+            ],
+            // Advertise AGH DNS via DHCP
+            "option-data": [ { "name": "routers", "data": "10.10.1.1" }, { "name": "domain-name-servers", "data": "10.10.1.253" } ]
+        },
+        {
+            "pools": [ { "pool": "10.30.1.10-10.30.1.11" } ],
+            "id": 2,
+            "interface": "eth0.30",
+            "subnet": "10.30.1.0/24",
+            "reservations-global": false,
+            "reservations-in-subnet": true,
+            "reservations-out-of-pool": true,
+            "option-data": [ { "name": "routers", "data": "10.30.1.1" }, { "name": "domain-name-servers", "data": "10.30.1.253" } ]
+        },
+        {
+            "pools": [ { "pool": "10.50.1.10-10.50.1.30" } ],
+            "id": 3,
+            "interface": "eth0.50",
+            "subnet": "10.50.1.0/24",
+            "reservations-global": false,
+            "reservations-in-subnet": true,
+            "reservations-out-of-pool": true,
+            "reservations": [
+                {
+                    "hostname": "<redacted>.rubberverse.internal",
+                    "hw-address": "<redacted>",
+                    "ip-address": "10.50.1.10"
+                }
+            ],
+            "option-data": [ { "name": "routers", "data": "10.50.1.1" }, { "name": "domain-name-servers", "data": "10.50.1.253" } ]
+        }
+    ],
+        "loggers": [
+        {
+            "name": "kea-dhcp4",
+            "severity": "INFO",
+            "output_options": [ { "output": "/var/log/kea/dhcp4.log", "maxver": 10 } ]
+        },
+        {
+            "name": "kea-dhcp4.dhcpsrv",
+            "severity": "INFO",
+            "output_options": [ { "output": "/var/log/kea/dhcp4-dhcpsrv.log", "maxver": 10 } ]
+        },
+        {
+            "name": "kea-dhcp4.leases",
+            "severity": "INFO",
+            "output_options": [ { "output": "/var/log/kea/dhcp4-leases.log", "maxver": 10 } ]
+        }
+        // VLAN20 has no DHCP
+        ]
+    }
+}
