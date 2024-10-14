@@ -1,0 +1,54 @@
+type: http
+name: discord
+log_level: info
+
+format: |
+    {
+    "content": null,
+    "embeds": [
+        {{range . -}}
+        {{$alert := . -}}
+        {{range .Decisions -}}
+        {{if $alert.Source.Cn -}}
+        {
+            "title": "{{Hostname}}",
+            "description": ":flag_{{ $alert.Source.Cn | lower }}: ({{$alert.Source.Cn | upper }}): {{$alert.Source.IP}} will get a {{.Type}} for the next {{.Duration}}.\n\n[CTI](https://app.crowdsec.net/cti/{{$alert.Source.IP}}) | [Shodan](https://www.shodan.io/host/{{$alert.Source.IP}})",
+            "url": "https://blog.rubberverse.xyz",
+            "color": 11287098,
+            "author": {
+                "name": "Security incident (Crowdsec alert triggered)"
+            },
+            "footer": {
+                "text": "Notification: http/discord.yaml"
+            },
+            "image": {
+                "url": "https://media.tenor.com/p3FEsN_5yVUAAAAC/gabriel-dropout-satania.gif"
+            }
+        }
+        {{end}}
+        {{if not $alert.Source.Cn -}}
+        {
+            "title": "{{Hostname}}",
+            "description": ":pirate_flag: {{$alert.Source.IP}}: {{$alert.Source.IP}} will get a {{.Type}} for the next {{.Duration}}.\n\n[CTI](https://app.crowdsec.net/cti/{{$alert.Source.IP}}) | [Shodan](https://www.shodan.io/host/{{$alert.Source.IP}})",
+            "url": "https://blog.rubberverse.xyz",
+            "color": 11287098,
+            "author": {
+                "name": "Security incident (Crowdsec alert triggered)"
+            },
+            "footer": {
+                "text": "Notification: http/discord.yaml"
+            },
+            "image": {
+                "url": "https://i.pinimg.com/originals/3d/73/a8/3d73a82d2305ef0c67c54df0850b49fb.gif"
+            }
+        {{end}}
+        {{end -}}
+        {{end -}}
+        ]
+    }
+
+url: https://discord.com/api/webhooks/<redacted>
+method: POST
+
+headers:
+  Content-Type: application/json
