@@ -1,12 +1,15 @@
-## Config Repository for *.rubberverse.xyz
-Repository for various configuration files for specific software or systemd services. For Dockerfiles, look at `MrRubberDucky/rubberverse_docker`.
+## Repository of configuration files, bash scripts and other things
 
-### What is this repository about
+If you're looking for my container images, they're under [Rubberverse organization](https://github.com/Rubberverse)
 
-This is a way for me to store backups of my configuration files and at the same time make it a learning experience for others just starting into the hobby. You should still research what each option here does but generally most of them are self-documenting and are mostly updated to current standards. They should also be production ready.
+## What is this repository about
 
-Most if not all configuration files here are used in production, if you feel like/or know that something is misconfigured then please create a Issue explaining what's wrong and I'll get around to fixing it.
+This is my way of keeping a nice tidy track of what I change locally without resorting to hours of troubleshooting hell because I knocked myself online again or changed something that I shouldn't have. It can also serve as a learning repository, I aim for my configuration files to be production-grade meaning you can just copy and paste and have working configuration yourself with some bit of tinkering.
 
-### What do the numbers mean on the directories?
+All these files indirectly or directly power my blog, which can be found at following link: [blog.rubberverse.xyz](https://blog.rubberverse.xyz), a tech rambling blog that also hosts some guides and other things. It's a relaxing blog, mostly just focusing on all sorts of things and aiming to have that old familiar "fuck this am not corporate" style of writing. Consider giving it a read if you ever feel bored!
 
-They're just a way for me to tag different Virtual Machines hosting these and easily see for what a specific configuration was used for internally. 
+To learn more, consider reading README.md located in `Generic` directory.
+
+## There's something that's wrong!
+
+Leave a GitHub issue and I'll get around to fixing it or maybe explaining why it's that way.
