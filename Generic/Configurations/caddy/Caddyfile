@@ -1,0 +1,124 @@
+{
+    http_port 8080
+    https_port 8443
+    admin 127.0.0.1:2019 {
+        origins localhost 127.0.0.1:2019
+        enforce_origin
+    }
+    order crowdsec before reverse_proxy
+    order umami after route
+    log default {
+        output stdout
+        level INFO
+        format json
+    }
+    acme_ca https://acme-v02.api.letsencrypt.org/directory
+    email {$ACME_EMAIL}
+    ocsp_interval 3d
+    servers {
+        trusted_proxies combine {
+            cloudflare {
+                interval 12h
+                timeout 30s
+            }
+            dns cloudflared {
+                interval 1m
+            }
+        }
+        listener_wrappers {
+            http_redirect
+            tls
+        }
+    }
+    crowdsec {
+        api_url http://crowdsec:58000
+        api_key {$CROWDSEC_LAPI_KEY}
+        ticker_interval 15s
+    }
+}
+
+{$FQDN} {
+    crowdsec
+    tls {
+        dns cloudflare {$CF_API_TOKEN}
+        resolvers 1.1.1.1
+    }
+    redir https://blog.rubberverse.xyz{uri} permanent
+}
+
+www.{$FQDN} {
+    crowdsec
+    tls {
+        dns cloudflare {$CF_API_TOKEN}
+        resolvers 1.1.1.1
+    }
+    redir https://blog.rubberverse.xyz{uri} permanent
+}
+
+blog.{$FQDN} {
+    crowdsec
+    tls {
+        dns cloudflare {$CF_API_TOKEN}
+        resolvers 1.1.1.1
+    }
+    reverse_proxy nginx:7000
+    @noadmin {
+        not path /uploads/* /includes/* /admin/* /login/ /logout/ /controls/
+    }
+    umami @noadmin {
+        event_endpoint "{$ANALYTICS_ENDPOINT}"
+        website_uuid "<redacted>"
+        allowed_extensions "" .htm .html .php
+        client_ip_header X-Real-IP
+        device_detection
+        static_metadata {
+            service chyrp-lite
+        }
+    }
+    header Access-Control-Allow-Origin https://analytics.rubberverse.xyz, https://rubberverse.xyz, https://blog.rubberverse.xyz {
+        defer
+    }
+    header * {
+        +Cross-Origin-Opener-Policy "same-origin-allow-popups"
+        +Cross-Origin-Resource-Policy "cross-origin"
+        +X-Content-Type-Options nosnif
+        +Permissions-Policy "cross-origin-isolated=(self)"
+        +Strict-Transport-Security max-age=63072000;
+        +X-Frame-Options SAMEORIGIN
+        +X-XSS-Protection "0"
+        +Access-Control-Allow-Credentials true
+    }
+    log {
+        output file /app/logs/blog.log {
+        roll_size 20M
+        roll_uncompressed
+        roll_keep_for 3d
+        }
+    }
+}
+
+analytics.{$FQDN} {
+    crowdsec
+    tls {
+        dns cloudflare {$CF_API_TOKEN}
+        resolvers 1.1.1.1
+    }
+    reverse_proxy {$LOCAL}:4000
+    header Access-Control-Allow-Origin https://rubberverse.xyz, https://rimgo.rubberverse.xyz, https://upload.rubberverse.xyz, https://news.rubberverse.xyz, https://analytics.rubberverse.xyz {
+        defer
+    }
+    header Access-Control-Allow-Headers DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization {
+        defer
+    }
+    header * {
+        +Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        +Cross-Origin-Resource-Policy "cross-origin"
+    }
+    log {
+        output file /app/logs/analytics.log {
+            roll_size 20M
+            roll_uncompressed
+            roll_keep_for 3d
+        }
+    }
+}
