@@ -69,6 +69,7 @@ blog.{$FQDN} {
         event_endpoint "{$ANALYTICS_ENDPOINT}"
         website_uuid "<redacted>"
         allowed_extensions "" .htm .html .php
+        # This doesn't really seem to work due to how extension in itself works? It will always slam everything into X-Forwarded-For which doesn't seem to do anything when you're proxying traffic behind Cloudflare - as in always serves CF server location / or location of your server
         client_ip_header X-Real-IP
         device_detection
         static_metadata {
