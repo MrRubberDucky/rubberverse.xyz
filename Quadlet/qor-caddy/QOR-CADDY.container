@@ -1,0 +1,33 @@
+[Unit]
+Description=Caddy QoR
+Requires=CLOUDFLARED.service
+After=CLOUDFLARED.service
+
+[Install]
+WantedBy=default.target
+
+[Container]
+Image=docker.io/mrrubberducky/qor-caddy:latest-alpine
+ContainerName=qor-caddy
+# Sensitive Environments
+Secret=CF__DNS_API,type=env,target=CF_API_TOKEN
+Secret=CROWDSEC__LAPI_KEY,type=env,target=CROWDSEC_LAPI_KEY
+Secret=ACME__EMAIL,type=env,target=ACME_EMAIL
+# Normal Environments
+Environment=CONFIG_PATH=/app/configs/Caddyfile
+Environment=CADDY_ENVIRONMENT=prod
+Environment=FQDN=rubberverse.xyz
+Environment=ANALYTICS_ENDPOINT=https://analytics.rubberverse.xyz/api/send
+# Configuration + Data persistence
+Volume=/root/AppData/1_CONFIGS/CADDYFILE:/app/configs/Caddyfile:ro
+Mount=type=bind,source=/root/AppData/2_PERSIST/CADDY_DATA,destination=/app/.local/share/caddy,U=true
+Mount=type=bind,source=/root/AppData/2_PERSIST/CADDY_CONFIG,destination=/app/.config/caddy,U=true
+Mount=type=bind,source=/root/AppData/2_PERSIST/CADDY_LOGS,destination=/app/logs,U=true
+# Auto Updates
+AutoUpdate=registry
+NoNewPrivileges=true
+Network=DMZ.network
+IP=10.20.1.23
+# User
+User=caddy
+UserNS=keep-id:uid=1001,gid=1001
