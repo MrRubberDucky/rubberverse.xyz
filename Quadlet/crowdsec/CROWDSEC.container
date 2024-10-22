@@ -1,0 +1,39 @@
+[Unit]
+Description=Crowdsecurity Daemon
+
+[Container]
+Image=docker.io/crowdsecurity/crowdsec:latest
+ContainerName=crowdsec
+Secret=CROWDSEC__BOUNCER_CADDY,type=env,target=BOUNCER_KEY_CADDY
+Secret=CROWDSEC__ENROLL_KEY,type=env,target=ENROLL_KEY
+Secret=CROWDSEC__COLLECTIONS,type=env,target=COLLECTIONS
+Secret=CROWDSEC__APPSEC_CFG,type=env,target=APPSEC_CONFIGS
+Secret=CROWDSEC__DISABLE_SCENARIOS,type=env,target=DISABLE_SCENARIOS
+Environment=LEVEL_INFO=true
+Environment=ENROLL_INSTANCE_NAME=PODMAN-VM
+Environment=ENROLL_TAGS=container,local
+Environment=USE_WAL=true
+Environment=ENABLE_CONSOLE_MANAGEMENT=""
+Environment=DO_HUB_UPGRADE=true
+Environment=TZ=Europe/Warsaw
+Environment=CUSTOM_HOSTNAME=container-lapi
+# Crowdsec data integrity and structure
+Mount=type=bind,src=/root/AppData/2_PERSIST/CROWDSEC_CFG,dst=/etc/crowdsec,U=true
+Mount=type=bind,src=/root/AppData/2_PERSIST/CROWDSEC_DATA,dst=/var/lib/crowdsec/data,U=true
+# Crowdsec notification setup and whitelist
+Volume=/root/AppData/1_CONFIGS/DISCORD.YAML:/etc/crowdsec/notifications/discord.yaml:ro
+Volume=/root/AppData/1_CONFIGS/ACQUIS.YAML:/etc/crowdsec/acquis.yaml:ro
+Volume=/root/AppData/1_CONFIGS/PROFILES.YAML:/etc/crowdsec/profiles.yaml:ro
+Volume=/root/AppData/1_CONFIGS/MYWHITELIST.YAML:/etc/crowdsec/postoverflows/s01-whitelist/rdns.yaml:ro
+Volume=/root/AppData/1_CONFIGS/MYWHITELIST2.YAML:/etc/crowdsec/postoverflows/s01-whitelist/rdns2.yaml:ro
+Volume=/root/AppData/2_PERSIST/CADDY_LOGS:/var/log/caddy:ro
+Tmpfs=/usr/local/lib/crowdsec
+# Typical things
+Timezone=Europe/Warsaw
+AutoUpdate=registry
+Network=DMZ.network
+# Runs as root but it's isolated so only really like one container has access to this one
+UserNS=keep-id
+
+[Install]
+WantedBy=default.target
