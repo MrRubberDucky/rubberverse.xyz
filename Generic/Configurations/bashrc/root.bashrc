@@ -32,5 +32,5 @@ alias creload="podman exec -t qor-caddy /app/bin/caddy reload -c /app/configs/Ca
 # ls colors
 alias ls="ls --color=auto"
 # Bash customization
-PS1="\[\e[0m\][\[\e[0;38;5;78m\]\d \[\e[0m\]- \[\e[0;38;5;44m\]\A\[\e[0m\]] \[\e[0;38;5;173m\]\u \[\e[0m\]{\[\e[0;93m\]\w\[\e[0m\]}\n\[\e[0;5;38;5;210m\]>\[\e[0;5;38;5;203m\]> \[\e[0m\]"
+PS1='\[\e[2m\][\[\e[0;38;5;183m\]\d\[\e[0m\] - \[\e[38;5;219m\]\A\[\e[0;2m\]]\[\e[0m\] \[\e[2m\](\[\e[0;38;5;224m\]\w\[\e[0;2m\])\n\[\e[0;38;5;225m\]\u\[\e[0;2m\]:\[\e[0m\] '
 LANG=en_US.UTF-8
