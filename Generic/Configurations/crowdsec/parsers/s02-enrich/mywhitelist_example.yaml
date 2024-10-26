@@ -1,0 +1,9 @@
+name: rubberverse/whitelist
+description: "Custom whitelist"
+whitelist:
+ reason: "custom whitelist"
+ ip:
+   - "VPS"
+ cidr:
+   - "10.0.0.0/8"
+   - "172.16.42.1/30"
