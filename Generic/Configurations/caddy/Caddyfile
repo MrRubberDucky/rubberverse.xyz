@@ -1,125 +1,129 @@
 {
-    http_port 8080
-    https_port 8443
-    admin 127.0.0.1:2019 {
-        origins localhost 127.0.0.1:2019
-        enforce_origin
-    }
-    order crowdsec before reverse_proxy
-    order umami after route
-    log default {
-        output stdout
-        level INFO
-        format json
-    }
-    acme_ca https://acme-v02.api.letsencrypt.org/directory
-    email {$ACME_EMAIL}
-    ocsp_interval 3d
-    servers {
-        trusted_proxies combine {
-            cloudflare {
-                interval 12h
-                timeout 30s
-            }
-            dns cloudflared {
-                interval 1m
-            }
-        }
-        listener_wrappers {
-            http_redirect
-            tls
-        }
-    }
-    crowdsec {
-        api_url http://crowdsec:58000
-        api_key {$CROWDSEC_LAPI_KEY}
-        ticker_interval 15s
-    }
+	# General configuration
+	http_port 8080
+	https_port 8443
+	# Admin endpoint for configuration reload, only listens on localhost
+	admin 127.0.0.1:2019 {
+		origins localhost 127.0.0.1:2019
+		enforce_origin
+	}
+	# Plugin ordering
+	order crowdsec before reverse_proxy
+	order umami after route
+	order rate_limit after basic_auth
+	# Default caddy log, outputs to container stdout
+	log default {
+		output stdout
+		level INFO
+		format json
+	}
+	# ACME Certificate Authority URL, email to use and ocsp stapling interval
+	acme_ca https://acme-v02.api.letsencrypt.org/directory
+	email {$ACME_EMAIL}
+	ocsp_interval 3d
+	ocsp_stapling on
+	servers {
+		trusted_proxies combine {
+			# Trust cloudflre proxies
+			cloudflare {
+				interval 12h
+				timeout 30s
+			}
+			static vps_ip/32
+			# Points to cloudflared container
+			#dns 10.20.1.65 {
+			#	interval 1m
+			#}
+		}
+		client_ip_headers {
+			X-Forwarded-For X-Real-IP
+		}
+		listener_wrappers {
+			http_redirect
+			tls
+		}
+	}
+	# Crowdsec Caddy bouncer configuration
+	crowdsec {
+		api_url http://10.20.1.66:8080
+		api_key {$CROWDSEC_LAPI_KEY}
+		ticker_interval 15s
+	}
 }
-
-{$FQDN} {
-    crowdsec
-    tls {
-        dns cloudflare {$CF_API_TOKEN}
-        resolvers 1.1.1.1
-    }
-    redir https://blog.rubberverse.xyz{uri} permanent
+(prod_headers) {
+	header {
+		Permissions-Policy "cross-origin-isolated=(self)"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		Access-Control-Allow-Origin "https://rubberverse.xyz, https://*.rubberverse.xyz"
+		Cross-Origin-Opener-Policy "same-origin-allow-popups"
+		Cross-Origin-Resource-Policy "cross-origin"
+		X-Content-Type-Options "nosniff"
+		X-XSS-Protection "1; mode=block"
+		X-Frame-Options "SAMEORIGIN"
+		X-Robots-Tag "nofollow, noimageindex"
+		Referrer-Policy "same-origin"
+	}
 }
-
+(dns_tls) {
+	tls {
+		dns cloudflare {$CF_API_TOKEN}
+		resolvers 1.1.1.1 1.0.0.1
+	}
+}
+(compress) {
+	@senscache {
+		not path /includes/ /admin/ /login/ /logout/ /controls/ /ajax/ /send/api /api/ /feed/
+	}
+	encode @senscache zstd gzip
+}
+# Rubberverse.xyz
 www.{$FQDN} {
-    crowdsec
-    tls {
-        dns cloudflare {$CF_API_TOKEN}
-        resolvers 1.1.1.1
-    }
-    redir https://blog.rubberverse.xyz{uri} permanent
+	crowdsec
+	import dns_tls
+	redir https://blog.rubberverse.xyz{uri} permanent
 }
-
 blog.{$FQDN} {
-    crowdsec
-    tls {
-        dns cloudflare {$CF_API_TOKEN}
-        resolvers 1.1.1.1
-    }
-    reverse_proxy nginx:7000
-    @noadmin {
-        not path /uploads/* /includes/* /admin/* /login/ /logout/ /controls/
-    }
-    umami @noadmin {
-        event_endpoint "{$ANALYTICS_ENDPOINT}"
-        website_uuid "<redacted>"
-        allowed_extensions "" .htm .html .php
-        # This doesn't really seem to work due to how extension in itself works? It will always slam everything into X-Forwarded-For which doesn't seem to do anything when you're proxying traffic behind Cloudflare - as in always serves CF server location / or location of your server
-        client_ip_header X-Real-IP
-        device_detection
-        static_metadata {
-            service chyrp-lite
-        }
-    }
-    header Access-Control-Allow-Origin https://analytics.rubberverse.xyz, https://rubberverse.xyz, https://blog.rubberverse.xyz {
-        defer
-    }
-    header * {
-        +Cross-Origin-Opener-Policy "same-origin-allow-popups"
-        +Cross-Origin-Resource-Policy "cross-origin"
-        +X-Content-Type-Options nosnif
-        +Permissions-Policy "cross-origin-isolated=(self)"
-        +Strict-Transport-Security max-age=63072000;
-        +X-Frame-Options SAMEORIGIN
-        +X-XSS-Protection "0"
-        +Access-Control-Allow-Credentials true
-    }
-    log {
-        output file /app/logs/blog.log {
-        roll_size 20M
-        roll_uncompressed
-        roll_keep_for 3d
-        }
-    }
+	crowdsec
+	import dns_tls
+	import prod_headers
+	import compress
+	reverse_proxy 10.20.1.68:9001
+	@noadmin {
+		not path /uploads/ /includes/ /admin/ /login/ /logout/ /controls/ /ajax/
+	}
+	umami @noadmin {
+		event_endpoint "{$ANALYTICS_ENDPOINT}"
+		website_uuid "477b57ef-fa4d-49af-8c1c-f7df17cf7c48"
+		allowed_extensions "" .htm .html .php
+		static_metadata {
+			service chyrp-lite
+		}
+	}
+	log {
+		output file /app/logs/blog.log {
+			roll_size 20M
+			roll_uncompressed
+			roll_keep_for 3d
+		}
+	}
 }
-
 analytics.{$FQDN} {
-    crowdsec
-    tls {
-        dns cloudflare {$CF_API_TOKEN}
-        resolvers 1.1.1.1
-    }
-    reverse_proxy {$LOCAL}:4000
-    header Access-Control-Allow-Origin https://rubberverse.xyz, https://rimgo.rubberverse.xyz, https://upload.rubberverse.xyz, https://news.rubberverse.xyz, https://analytics.rubberverse.xyz {
-        defer
-    }
-    header Access-Control-Allow-Headers DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization {
-        defer
-    }
-    header * {
-        +Access-Control-Allow-Methods "GET, POST, OPTIONS"
-        +Cross-Origin-Resource-Policy "cross-origin"
-    }
-    log {
-        output file /app/logs/analytics.log {
-            roll_size 20M
-            roll_uncompressed
-            roll_keep_for 3d
-        }
-    }
+	crowdsec
+	import dns_tls
+	import prod_headers
+	import compress
+	reverse_proxy 10.20.1.102:3000
+	header Access-Control-Allow-Headers DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization {
+		defer
+	}
+	header * {
+		+Access-Control-Allow-Methods "GET, POST, OPTIONS"
+	}
+	log {
+		output file /app/logs/analytics.log {
+			roll_size 20M
+			roll_uncompressed
+			roll_keep_for 3d
+		}
+	}
 }
