@@ -1,0 +1,27 @@
+# Alpine Linux has no proper pam.d support
+# so you can either have 2fa with password auth or pubkey, for whatever reason.
+include /etc/ssh/sshd_config.d/*.cfg
+
+Protocol 2
+Port 22
+ListenAddress 0.0.0.0
+AddressFamily inet
+PasswordAuthentication no
+PubkeyAuthentication yes
+ChallengeResponseAuthentication no
+KbdInteractiveAuthentication no
+# Needed otherwise it won't make use of pubkeys
+AuthorizedKeysFile %h/.ssh/authorized_keys
+LogLevel VERBOSE
+UseDNS no
+AllowAgentForwarding no
+GatewayPorts no
+PermitTunnel no
+AcceptEnv LANG LC_*
+ClientAliveCountMax 2
+ClientAliveInterval 300
+AllowUsers "user"
+MaxAuthTries 3
+
+Match User user
+        AuthenticationMethods publickey
