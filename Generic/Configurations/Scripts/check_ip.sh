@@ -16,11 +16,11 @@ if [ "$new_ip" = "$old_ip" ] ; then
     echo IP address has not changed
 else
     if [ -n "$old_ip" ] ; then
-        /usr/sbin/ufw delete allow from $old_ip to any port 22 proto tcp
-        /usr/sbin/ufw delete allow from $old_ip to any port 51820 proto udp
+        /usr/sbin/ufw delete allow from "$old_ip" to any port 22 proto tcp
+        /usr/sbin/ufw delete allow from "$old_ip" to any port 51820 proto udp
     fi
-    /usr/sbin/ufw insert 1 allow from $new_ip to any port 22 proto tcp
-    /usr/sbin/ufw insert 2 allow from $new_ip to any port 51820 proto udp
+    /usr/sbin/ufw insert 1 allow from "$new_ip" to any port 22 proto tcp
+    /usr/sbin/ufw insert 2 allow from "$new_ip" to any port 51820 proto udp
     /usr/sbin/ufw reload
     echo iptables have been updated
 fi
