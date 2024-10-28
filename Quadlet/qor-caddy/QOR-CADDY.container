@@ -1,7 +1,5 @@
 [Unit]
 Description=Caddy QoR
-Requires=CLOUDFLARED.service
-After=CLOUDFLARED.service
 
 [Install]
 WantedBy=default.target
@@ -19,15 +17,17 @@ Environment=CADDY_ENVIRONMENT=prod
 Environment=FQDN=rubberverse.xyz
 Environment=ANALYTICS_ENDPOINT=https://analytics.rubberverse.xyz/api/send
 # Configuration + Data persistence
-Volume=/root/AppData/1_CONFIGS/CADDYFILE:/app/configs/Caddyfile:ro
-Mount=type=bind,source=/root/AppData/2_PERSIST/CADDY_DATA,destination=/app/.local/share/caddy,U=true
-Mount=type=bind,source=/root/AppData/2_PERSIST/CADDY_CONFIG,destination=/app/.config/caddy,U=true
-Mount=type=bind,source=/root/AppData/2_PERSIST/CADDY_LOGS,destination=/app/logs,U=true
+Volume=${HOME}/AppData/1_CONFIGS/CADDYFILE:/app/configs/Caddyfile:ro
+Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_DATA,destination=/app/.local/share/caddy,U=true
+Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_CONFIG,destination=/app/.config/caddy,U=true
+Volume=CADDY-LOGS:/app/logs:rw
 # Auto Updates
 AutoUpdate=registry
 NoNewPrivileges=true
-Network=DMZ.network
-IP=10.20.1.23
+# https://old.reddit.com/r/podman/comments/1c46q54/pasta_rootless_intracontainer_networking/kzw6668/
+# Maps local port 8080, 9001 inside the container to port 8080, 9001 on the host (for container<->container connection via pasta without DNS since it's not a thing on v5.2.5)
+Network=pasta:--ipv4-only,-T,8080,-T,9001
+PublishPort=127.0.0.1:8443:8443
 # User
 User=caddy
-UserNS=keep-id:uid=1001,gid=1001
+UserNS=auto:uidmapping=1001:1001:1,gidmapping=1001:1001:1
