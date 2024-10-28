@@ -20,8 +20,11 @@ These configuration files directly and in-directly power my front-facing stuff s
 | `NGINX` | Includes site.conf that has configuration specific to chyrp-lite to enable clear URLs, as the one from their documentation always results in `Unknown variable: {chyrp_lite}` |
 | `Scripts` | Stores useful scripts I may wanna re-use at a later date, those usually consist of semi-automatic way to do something or they target specific activity |
 | `Unbound` | My production-ready Unbound configuration tailored towards an ARM device running with 8-core Snapdragon SOC. It also acts as an caching server and also as an Private resolver for domains. AdGuard Home is front-facing DNS server, taking care of filtering |
+| `bashrc` | Cotton candy themed bash styling and some aliases I use compactified. |
+| `caddy` | My Caddyfile that I use with my `qor-caddy` container image. Makes use of a lot of Caddy specific gadgets and modules included in my image so not very applicable for standard Caddy image. |
+| `chrony` | Chrony NTP client configured to use NTS (Network Time Security) sources. More secure variant to our usual NTP time servers. | 
 | `crowdsec` | Set of various configuration files between my hosts running Crowdsec. So far, only two devices run Crowdsec on my network - My firewall and my DMZ VLAN container VM |
-| `init.d` | Initialization script for `rc`, Alpine Linux focused. My phone runs postmarketOS which is based on Alpine Linux so that's why I need to resort to it, for now it only has a script to launch AdGuard Home on boot |
+| `init.d` | Initialization script for `rc`, Alpine Linux focused. My phone runs postmarketOS which is based on Alpine Linux so some scripts touch it, some don't. Some are just shamelessly ripped off Gentoo wiki or Alpine Linux community packages for easy access. |
 | `kea-dhcp4` | My production-ready kea-dhcp configuration, for IPv4 networks. Also runs on my phone |
 | `velocity` | Just a very simple backup of the configuration file I had on my VPS, it's lazy and not much is changed but it's there |
 
