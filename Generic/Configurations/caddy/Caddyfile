@@ -79,6 +79,11 @@
 	encode @senscache zstd gzip
 }
 # Rubberverse.xyz
+{$FQDN} {
+	crowdsec
+	import dns_tls
+	redir https://blog.rubberverse.xyz{uri} permanent
+}
 www.{$FQDN} {
 	crowdsec
 	import dns_tls
