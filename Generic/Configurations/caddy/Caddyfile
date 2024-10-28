@@ -1,6 +1,6 @@
 {
 	# General configuration
-	http_port 8080
+	http_port 8181
 	https_port 8443
 	# Admin endpoint for configuration reload, only listens on localhost
 	admin 127.0.0.1:2019 {
@@ -8,7 +8,7 @@
 		enforce_origin
 	}
 	# Plugin ordering
-	order crowdsec before reverse_proxy
+	order crowdsec first
 	order umami after route
 	order rate_limit after basic_auth
 	# Default caddy log, outputs to container stdout
@@ -21,31 +21,33 @@
 	acme_ca https://acme-v02.api.letsencrypt.org/directory
 	email {$ACME_EMAIL}
 	ocsp_interval 3d
-	ocsp_stapling on
 	servers {
+		listener_wrappers {
+			# Required for Source IP when proxying Caddy via frpc <-> frps (out, 443)
+			proxy_protocol {
+				timeout 5s
+				allow 127.0.0.1/8 vps_ip/32
+				deny 10.0.0.0/8
+				fallback_policy reject
+			}
+			# proxy_protocol needs to be before tls, otherwise it won't work.
+			http_redirect
+			proxy_protocol
+			tls
+		}
 		trusted_proxies combine {
 			# Trust cloudflre proxies
 			cloudflare {
 				interval 12h
 				timeout 30s
 			}
-			static vps_ip/32
-			# Points to cloudflared container
-			#dns 10.20.1.65 {
-			#	interval 1m
-			#}
+			static vps_ip/32 private_ranges
 		}
-		client_ip_headers {
-			X-Forwarded-For X-Real-IP
-		}
-		listener_wrappers {
-			http_redirect
-			tls
-		}
+		trusted_proxies_strict
 	}
 	# Crowdsec Caddy bouncer configuration
 	crowdsec {
-		api_url http://10.20.1.66:8080
+		api_url http://localhost:8080
 		api_key {$CROWDSEC_LAPI_KEY}
 		ticker_interval 15s
 	}
@@ -87,18 +89,20 @@ blog.{$FQDN} {
 	import dns_tls
 	import prod_headers
 	import compress
-	reverse_proxy 10.20.1.68:9001
-	@noadmin {
-		not path /uploads/ /includes/ /admin/ /login/ /logout/ /controls/ /ajax/
-	}
-	umami @noadmin {
-		event_endpoint "{$ANALYTICS_ENDPOINT}"
-		website_uuid "477b57ef-fa4d-49af-8c1c-f7df17cf7c48"
-		allowed_extensions "" .htm .html .php
-		static_metadata {
-			service chyrp-lite
-		}
-	}
+	reverse_proxy localhost:9001
+	#@noadmin {
+	#	not path /uploads/ /includes/ /admin/ /login/ /logout/ /controls/ /ajax/
+	#}
+	#umami @noadmin {
+	#	event_endpoint "{$ANALYTICS_ENDPOINT}"
+	#	# It doesn't really matter it's here since umami wasn't set up yet.
+	#   	# seems to wipe it's own database anyways on fresh container for whatever reason.
+	#	website_uuid "477b57ef-fa4d-49af-8c1c-f7df17cf7c48"
+	#	allowed_extensions "" .htm .html .php
+	#	static_metadata {
+	#		service chyrp-lite
+	#	}
+	#}
 	log {
 		output file /app/logs/blog.log {
 			roll_size 20M
@@ -112,7 +116,7 @@ analytics.{$FQDN} {
 	import dns_tls
 	import prod_headers
 	import compress
-	reverse_proxy 10.20.1.102:3000
+	reverse_proxy localhost:3000
 	header Access-Control-Allow-Headers DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization {
 		defer
 	}
