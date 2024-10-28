@@ -1,0 +1,19 @@
+#!/sbin/openrc-run
+# Ripped from Alpine Linux frp community repository so all credit goes to them.
+
+name=frps
+description="frp server"
+command="/usr/bin/$name"
+supervisor=supervise-daemon
+
+: ${cfgfile:=/etc/frp/$RC_SVCNAME.toml}
+command_args="-c /etc/frps/frps.toml"
+pidfile="/run/$RC_SVCNAME.pid"
+
+: ${respawn_delay:=5}
+: ${respawn_max:=0}
+
+depend() {
+        need net
+        after firewall
+}
