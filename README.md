@@ -4,7 +4,7 @@ If you're looking for my container images, they're under [Rubberverse organizati
 
 ## What is this repository about
 
-This is my way of keeping a nice tidy track of what I change locally without resorting to hours of troubleshooting hell because I knocked myself online again or changed something that I shouldn't have. It can also serve as a learning repository, I aim for my configuration files to be production-grade meaning you can just copy and paste and have working configuration yourself with some bit of tinkering.
+This is my way of keeping a nice tidy track of what I change locally without resorting to hours of troubleshooting hell because I knocked myself offline again or changed something that I shouldn't have. It can also serve as a learning repository, I aim for my configuration files to be production-grade meaning you can just copy and paste and have working configuration yourself with some bit of tinkering.
 
 All these files indirectly or directly power my blog, which can be found at following link: [blog.rubberverse.xyz](https://blog.rubberverse.xyz), a tech rambling blog that also hosts some guides and other things. It's a relaxing blog, mostly just focusing on all sorts of things and aiming to have that old familiar "fuck this am not corporate" style of writing. Consider giving it a read if you ever feel bored!
 
