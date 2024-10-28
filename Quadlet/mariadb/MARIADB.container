@@ -1,6 +1,5 @@
 [Unit]
 Description=MariaDB
-Requires=network-online.target
 Before=NGINX.service
 
 [Install]
@@ -9,20 +8,20 @@ WantedBy=default-user.target
 [Container]
 Image=docker.io/library/mariadb:latest
 ContainerName=MariaDB
-Volume=MARIADB.volume:/var/lib/mysql:rw,U
-Volume=/root/AppData/1_CONFIGS/MY.CNF:/etc/mysql/my.cnf:ro
-Secret=MARIADB__ROOT_USER,type=env,target=MARIADB_ROOT_USER
+Mount=type=bind,src=/home/overseer/AppData/4_DATABASES/MARIADB_CHYRP,dst=/var/lib/mysql,U=true
+Volume=${HOME}/AppData/1_CONFIGS/MY.CNF:/etc/mysql/my.cnf:ro
 Secret=MARIADB__ROOT_PW,type=env,target=MARIADB_ROOT_PASSWORD
 Secret=MARIADB__DATABASE,type=env,target=MARIADB_DATABASE
-Secret=MARIADB__USER,type=env,target=MARIADB_USER
 Secret=MARIADB__PW,type=env,target=MARIADB_PASSWORD
+Environment=MARIADB_ROOT_USER=root
+Environment=MARIADB_USER=blog
 Environment=ALLOW_EMPTY_PASSWORD=no
 Environment=MARIADB_PORT_NUMBER=3389
 Environment=DB_FLAVOR=mariadb
 Environment=MARIADB_EXTRA_FLAGS=--max-connect-errors=1000 --max_connections=100
 AutoUpdate=registry
 User=mysql
-UserNS=keep-id:uid=999,gid=999
+UserNS=auto:uidmapping=999:999:1,gidmapping=999:999:1
 NoNewPrivileges=true
-Network=DMZ_INT.network
-IP=10.20.1.100
+Network=NGINX.network
+IP=10.200.1.3
