@@ -1,0 +1,20 @@
+[Unit]
+Description=qor-frpc
+
+[Container]
+# https://github.com/Rubberverse/qor-chyrp
+Image=docker.io/mrrubberducky/qor-frp:latest-frpc-unpriv
+ContainerName=qor-frpc
+Secret=FRP__CLIENT_CERT,type=mount,target=/app/certs/client.crt,uid=1001,gid=1001,mode=0440
+Secret=FRP__CLIENT_KEY,type=mount,target=/app/certs/client.key,uid=1001,gid=1001,mode=0440
+Secret=FRP__CA_CERT,type=mount,target=/app/certs/ca.crt,uid=1001,gid=1001,mode=0440
+Volume=${HOME}/AppData/1_CONFIGS/FRPC_NEW.TOML:/app/configs/frpc.toml:ro
+User=frp_uclient
+UserNS=auto:uidmapping=1001:1001:1,gidmapping=1001:1001:1
+ReadOnly=true
+AutoUpdate=registry
+NoNewPrivileges=true
+Network=pasta:--ipv4-only,-T,8443
+
+[Install]
+WantedBy=default.target
