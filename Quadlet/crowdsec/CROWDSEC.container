@@ -20,23 +20,22 @@ Environment=DO_HUB_UPGRADE=true
 Environment=TZ=Europe/Warsaw
 Environment=CUSTOM_HOSTNAME=container-lapi
 # Crowdsec data integrity and structure
-Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/CROWDSEC_CFG,dst=/etc/crowdsec,U=true
-Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/CROWDSEC_DATA,dst=/var/lib/crowdsec/data,U=true
+Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/CROWDSEC_CFG,dst=/etc/crowdsec,U=true,Z
+Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/CROWDSEC_DATA,dst=/var/lib/crowdsec/data,U=true,Z
 # Crowdsec notification setup and whitelist
-Volume=${HOME}/AppData/1_CONFIGS/ACQUIS.YAML:/etc/crowdsec/acquis.yaml:ro
-Volume=${HOME}/AppData/1_CONFIGS/PROFILES.YAML:/etc/crowdsec/profiles.yaml:ro
-Volume=${HOME}/AppData/1_CONFIGS/MYWHITELIST.YAML:/etc/crowdsec/postoverflows/s01-whitelist/rdns.yaml:ro
-Volume=${HOME}/AppData/1_CONFIGS/MYWHITELIST2.YAML:/etc/crowdsec/postoverflows/s01-whitelist/rdns2.yaml:ro
-Volume=${HOME}/AppData/1_CONFIGS/MYWHITELIST3.YAML:/etc/crowdsec/parsers/s02-enrich/mywhitelist.yaml:ro
+Volume=${HOME}/AppData/1_CONFIGS/ACQUIS.YAML:/etc/crowdsec/acquis.yaml:Z,ro
+Volume=${HOME}/AppData/1_CONFIGS/PROFILES.YAML:/etc/crowdsec/profiles.yaml:Z,ro
+Volume=${HOME}/AppData/1_CONFIGS/MYWHITELIST.YAML:/etc/crowdsec/postoverflows/s01-whitelist/rdns.yaml:Z,ro
+Volume=${HOME}/AppData/1_CONFIGS/MYWHITELIST2.YAML:/etc/crowdsec/postoverflows/s01-whitelist/rdns2.yaml:Z,ro
+Volume=${HOME}/AppData/1_CONFIGS/MYWHITELIST3.YAML:/etc/crowdsec/parsers/s02-enrich/mywhitelist.yaml:Z,ro
 # Need to create it manually
-Volume=CADDY-LOGS:/var/log/caddy:ro
+Volume=CADDY-LOGS:/var/log/caddy:ro,Z
 Tmpfs=/usr/local/lib/crowdsec
 # Typical things
 Timezone=Europe/Warsaw
 AutoUpdate=registry
 Network=pasta:--ipv4-only
 PublishPort=127.0.0.1:8080:8080/tcp
-UserNS=auto:size=1001
 
 [Install]
 WantedBy=default.target
