@@ -1,0 +1,12 @@
+[Network]
+Driver=bridge
+DisableDNS=true
+Gateway=10.200.1.4
+IPRange=10.200.1.4-10.200.1.5
+Subnet=10.200.1.4/30
+IPv6=false
+NetworkName=umami
+PodmanArgs=-o=vlan=20
+PodmanArgs=-o=com.docker.network.bridge.name=umami
+PodmanArgs=-o=isolate=true
+Internal=true
