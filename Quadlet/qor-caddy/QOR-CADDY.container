@@ -17,17 +17,14 @@ Environment=CADDY_ENVIRONMENT=prod
 Environment=FQDN=rubberverse.xyz
 Environment=ANALYTICS_ENDPOINT=https://analytics.rubberverse.xyz/api/send
 # Configuration + Data persistence
-Volume=${HOME}/AppData/1_CONFIGS/CADDYFILE:/app/configs/Caddyfile:ro
-Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_DATA,destination=/app/.local/share/caddy,U=true
-Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_CONFIG,destination=/app/.config/caddy,U=true
-Volume=CADDY-LOGS:/app/logs:rw
+Volume=/home/overseer/AppData/1_CONFIGS/CADDYFILE:/app/configs/Caddyfile:ro,Z
+Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_DATA,destination=/app/.local/share/caddy,U=true,Z
+Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_CONFIG,destination=/app/.config/caddy,U=true,Z
+Volume=CADDY-LOGS:/app/logs:rw,Z
 # Auto Updates
 AutoUpdate=registry
 NoNewPrivileges=true
-# https://old.reddit.com/r/podman/comments/1c46q54/pasta_rootless_intracontainer_networking/kzw6668/
-# Maps local port 8080, 9001 inside the container to port 8080, 9001 on the host (for container<->container connection via pasta without DNS since it's not a thing on v5.2.5)
-Network=pasta:--ipv4-only,-T,8080,-T,9001
+Network=pasta:--ipv4-only,-T,8080,-T,9001,-T,3000
 PublishPort=127.0.0.1:8443:8443
 # User
 User=caddy
-UserNS=auto:uidmapping=1001:1001:1,gidmapping=1001:1001:1
