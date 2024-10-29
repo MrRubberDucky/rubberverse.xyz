@@ -1,0 +1,25 @@
+[Unit]
+Description=NGINX Container
+Requires=MARIADB.service
+After=MARIADB.service
+
+[Container]
+# https://github.com/Rubberverse/qor-chyrp
+Image=localhost/nginx:latest
+ContainerName=nginx
+Mount=type=bind,src=/home/overseer/AppData/3_USER/CHYRPLITE,dst=/app/www/chyrp,U=true,Z
+Environment=PROCESS_MANAGER=static
+Environment=PM_MAX_CHILDREN=2
+Environment=PM_START_SERVERS=2
+Environment=PM_MIN_SPARE_SERVERS=1
+Environment=PM_MAX_SPARE_SERVERS=1
+Environment=ALLOW_URL_FOPEN=Off
+User=nginx_user
+AutoUpdate=registry
+NoNewPrivileges=true
+Network=NGINX.network
+IP=10.200.1.1
+PublishPort=127.0.0.1:9001:9001
+
+[Install]
+WantedBy=default.target
