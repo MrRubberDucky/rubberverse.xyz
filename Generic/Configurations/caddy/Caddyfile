@@ -74,7 +74,7 @@
 }
 (compress) {
 	@senscache {
-		not path /includes/ /admin/ /login/ /logout/ /controls/ /ajax/ /send/api /api/ /feed/
+		not path /includes/* /admin/* /login/ /logout/ /controls/ /ajax/ /send/api /api/ /feed/
 	}
 	encode @senscache zstd gzip
 }
@@ -95,19 +95,19 @@ blog.{$FQDN} {
 	import prod_headers
 	import compress
 	reverse_proxy localhost:9001
-	#@noadmin {
-	#	not path /uploads/ /includes/ /admin/ /login/ /logout/ /controls/ /ajax/
-	#}
-	#umami @noadmin {
-	#	event_endpoint "{$ANALYTICS_ENDPOINT}"
-	#	# It doesn't really matter it's here since umami wasn't set up yet.
-	#   	# seems to wipe it's own database anyways on fresh container for whatever reason.
-	#	website_uuid "477b57ef-fa4d-49af-8c1c-f7df17cf7c48"
-	#	allowed_extensions "" .htm .html .php
-	#	static_metadata {
-	#		service chyrp-lite
-	#	}
-	#}
+	@noadmin {
+		not path /uploads/* /includes/* /admin/* /login/ /logout/ /controls/ /ajax/
+	}
+        umami @noadmin {
+                event_endpoint "{$ANALYTICS_ENDPOINT}"
+                website_uuid "<redacted>"
+                allowed_extensions "" .htm .html .php
+                client_ip_header "Client_ip"
+                trusted_ip_header "X-Forwarded-For"
+                static_metadata {
+                        service chyrp-lite
+                }
+        }
 	log {
 		output file /app/logs/blog.log {
 			# Done so Crowdsec container can read Caddy log files
