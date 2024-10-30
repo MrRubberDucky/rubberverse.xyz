@@ -98,16 +98,16 @@ blog.{$FQDN} {
 	@noadmin {
 		not path /uploads/* /includes/* /admin/* /login/ /logout/ /controls/ /ajax/
 	}
-        umami @noadmin {
-                event_endpoint "{$ANALYTICS_ENDPOINT}"
-                website_uuid "<redacted>"
-                allowed_extensions "" .htm .html .php
-                client_ip_header "Client_ip"
-                trusted_ip_header "X-Forwarded-For"
-                static_metadata {
-                        service chyrp-lite
-                }
-        }
+	umami @noadmin {
+		event_endpoint "{$ANALYTICS_ENDPOINT}"
+		website_uuid "<redacted>"
+		allowed_extensions "" .htm .html .php
+		client_ip_header "Client_ip"
+		trusted_ip_header "X-Forwarded-For"
+		static_metadata {
+			service chyrp-lite
+		}
+	}
 	log {
 		output file /app/logs/blog.log {
 			# Done so Crowdsec container can read Caddy log files
@@ -132,6 +132,22 @@ analytics.{$FQDN} {
 	}
 	log {
 		output file /app/logs/analytics.log {
+			mode 644
+			roll_size 20M
+			roll_uncompressed
+			roll_keep_for 3d
+		}
+	}
+}
+read.{$FQDN} {
+	crowdsec
+	import dns_tls
+	import prod_headers
+	import compress
+	reverse_proxy localhost:50000
+	log {
+		output file /app/logs/readeck.log {
+			# Done so Crowdsec container can read Caddy log files
 			mode 644
 			roll_size 20M
 			roll_uncompressed
