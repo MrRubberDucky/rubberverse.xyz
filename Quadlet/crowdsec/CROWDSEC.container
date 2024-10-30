@@ -32,6 +32,7 @@ Volume=${HOME}/AppData/1_CONFIGS/MYWHITELIST3.YAML:/etc/crowdsec/parsers/s02-enr
 Volume=CADDY-LOGS:/var/log/caddy:ro,Z
 Tmpfs=/usr/local/lib/crowdsec
 # Typical things
+SecurityLabelDisable=true
 Timezone=Europe/Warsaw
 AutoUpdate=registry
 Network=pasta:--ipv4-only
