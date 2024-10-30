@@ -14,6 +14,11 @@ Secret=UMAMI__APP_SECRET,type=env,target=APP_SECRET
 Environment=DATABASE_TYPE=postgresql
 Environment=DISABLE_TELEMETRY=1
 Environment=REMOVE_TRAILING_SLASH=1
+Environment=CLIENT_IP_HEADER="Client_ip"
+Environment=LOG_QUERY=1
+# This doesn't really matter since container runs on isolated network anyways
+Environment=PRIVATE_MODE=1
+Environment=IGNORE_IP=127.0.0.1
 Environment=TZ=Europe/Warsaw
 Tmpfs=/home/nextjs/.yarn
 Tmpfs=/home/nextjs/.cache
