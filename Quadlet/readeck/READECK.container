@@ -1,0 +1,18 @@
+[Unit]
+Description=readeck
+
+[Container]
+# https://github.com/Rubberverse/qor-chyrp
+Image=codeberg.org/readeck/readeck:latest
+ContainerName=readeck
+Environment=READECK_SERVER_PORT=50000
+Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/READECK,dst=/etc/readeck,U=true,Z
+Exec=readeck serve -config /etc/readeck/config.toml
+User=nobody
+AutoUpdate=registry
+NoNewPrivileges=true
+Network=pasta:--ipv4-only
+PublishPort=50000:50000/tcp
+
+[Install]
+WantedBy=default.target
