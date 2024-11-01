@@ -1,0 +1,29 @@
+[Unit]
+Description=NGINX FreshRSS Container
+Requires=FRESHRSS-PGSQL.service
+After=FRESHRSS-PGSQL.service
+
+[Container]
+# https://github.com/Rubberverse/qor-nginx
+Image=docker.io/mrrubberducky/qor-freshrss:latest-debian
+ContainerName=freshrss-nginx
+Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/FRESHRSSDATA,dst=/app/www/freshrss/data,U=true,Z
+Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/FRESHRSSCFG,dst=/app/www/freshrss/extensions,U=true,Z
+Environment=PROCESS_MANAGER=static
+Environment=PM_MAX_CHILDREN=2
+Environment=PM_START_SERVERS=2
+Environment=PM_MIN_SPARE_SERVERS=1
+Environment=PM_MAX_SPARE_SERVERS=1
+Environment=NGINX_HTTP_SERVER_PORT=9002
+Environment=NGINX_SERVER_NAME=news.rubberverse.xyz
+User=nginx_user
+AutoUpdate=registry
+NoNewPrivileges=true
+# Funny, I wanted to have a normal bridge but for some reason I have no network connectivity under any bridge?
+# Hell if I know what's wrong with it, at least I can workaround with it with pasta by exposing only one container port to host then using it here but still.
+# Rootless podman shenanigans amirite? I checked my firewall and... such thing doesn't even exist on my VM so eh. Who knows what's filtering it lol. (I do my filtering via opnsense)
+Network=pasta:--ipv4-only,-T,5432
+PublishPort=127.0.0.1:9002:9002
+
+[Install]
+WantedBy=default.target
