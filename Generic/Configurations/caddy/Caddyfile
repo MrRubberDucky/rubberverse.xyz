@@ -23,20 +23,20 @@
 	ocsp_interval 3d
 	servers {
 		listener_wrappers {
-			# Required for Source IP when proxying Caddy via frpc <-> frps (out, 443)
+		# Required for Source IP when proxying Caddy via frpc <-> frps (out, 443)
 			proxy_protocol {
 				timeout 5s
-				allow 127.0.0.1/8 vps_ip/32
-				deny 10.0.0.0/8
-				fallback_policy reject
+					allow 127.0.0.1/8 vps_ip/32
+					deny 10.0.0.0/8
+					fallback_policy reject
+				}
+				# proxy_protocol needs to be before tls, otherwise it won't work.
+				http_redirect
+				proxy_protocol
+				tls
 			}
-			# proxy_protocol needs to be before tls, otherwise it won't work.
-			http_redirect
-			proxy_protocol
-			tls
-		}
 		trusted_proxies combine {
-			# Trust cloudflre proxies
+		# Trust cloudflre proxies
 			cloudflare {
 				interval 12h
 				timeout 30s
@@ -44,6 +44,13 @@
 			static vps_ip/32 private_ranges
 		}
 		trusted_proxies_strict
+		timeouts {
+			read_body 1m
+			read_header 30s
+			write 30s
+			idle 5m
+		}
+		keepalive_interval 20s
 	}
 	# Crowdsec Caddy bouncer configuration
 	crowdsec {
@@ -77,6 +84,10 @@
 		not path /includes/* /admin/* /login/ /logout/ /controls/ /ajax/ /send/api /api/ /feed/
 	}
 	encode @senscache zstd gzip
+	@static {
+		path *.ico *.svg *.gif *.jpg *.jpeg *.png *.webp *.avif *.woff *.woff2 *.css
+	}
+	header @static Cache-Control "public, max-age=604800"
 }
 # Rubberverse.xyz
 {$FQDN} {
@@ -94,6 +105,25 @@ blog.{$FQDN} {
 	import dns_tls
 	import prod_headers
 	import compress
+	rate_limit {
+		zone blog_feed {
+			match {
+				path /feed/
+			}
+			key {client_ip}
+			events 3
+			# It's not like a lot of content gets pushed so often to need frequent checks
+			window 5m
+		}
+		zone blog_login {
+			match {
+				path /login/ /logout/ /register/
+			}
+			key {client_ip}
+			events 5
+			window 1m
+		}
+	}
 	reverse_proxy localhost:9001
 	@noadmin {
 		not path /uploads/* /includes/* /admin/* /login/ /logout/ /controls/ /ajax/
@@ -106,11 +136,11 @@ blog.{$FQDN} {
 		trusted_ip_header "X-Forwarded-For"
 		static_metadata {
 			service chyrp-lite
-		}
+			}
 	}
 	log {
 		output file /app/logs/blog.log {
-			# Done so Crowdsec container can read Caddy log files
+		# Done so Crowdsec container can read Caddy log files
 			mode 644
 			roll_size 20M
 			roll_uncompressed
@@ -147,7 +177,21 @@ read.{$FQDN} {
 	reverse_proxy localhost:50000
 	log {
 		output file /app/logs/readeck.log {
-			# Done so Crowdsec container can read Caddy log files
+			mode 644
+			roll_size 20M
+			roll_uncompressed
+			roll_keep_for 3d
+		}
+	}
+}
+news.{$FQDN} {
+	crowdsec
+	import dns_tls
+	import prod_headers
+	import compress
+	reverse_proxy localhost:9002
+	log {
+		output file /app/logs/news.log {
 			mode 644
 			roll_size 20M
 			roll_uncompressed
