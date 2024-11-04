@@ -1,0 +1,14 @@
+[Network]
+# Honestly this is kinda pointless but I just wanted to have it be isolated compared to how default podman bridge would do it.
+Driver=bridge
+DisableDNS=true
+Gateway=10.100.4.1
+IPRange=10.100.4.1/24
+Subnet=10.100.4.1/24
+IPv6=false
+IPAMDriver=host-local
+NetworkName=readeck
+PodmanArgs=-o=vlan=20
+PodmanArgs=-o=com.docker.network.bridge.name=readeck
+PodmanArgs=-o=isolate=true
+Internal=false
