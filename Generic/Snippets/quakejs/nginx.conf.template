@@ -1,0 +1,40 @@
+user quakejs;
+error_log /app/logs/nginx/error.log;
+pcre_jit on;
+worker_processes ${NGINX_WORKER_PROCESSES};
+pid /app/run/nginx.pid;
+
+events {
+	worker_connections ${NGINX_WORKER_CONNECTIONS};
+	multi_accept ${NGINX_MULTI_ACCEPT};
+}
+
+http {
+	include /app/configs/nginx/mime.types;
+	default_type application/octet-stream;
+	server_tokens off;
+	sendfile off;
+	tcp_nopush ${NGINX_TCP_NOPUSH};
+	charset ${NGINX_CHARSET};
+	access_log /app/logs/nginx/access.log;
+}
+
+server {
+	listen ${NGINX_HTTP_SERVER_PORT} default_server;
+	root /app/www/quakejs;
+	index index.html;
+	server_name _;
+
+	location / {
+		try_files /nonexistent @$http_upgrade;
+	}
+	location @ {
+		try_files $uri $uri/ =404;
+	}
+	location @websocket {
+		proxy_pass http://localhost:27960;
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection "upgrade";
+	}
+}
