@@ -11,7 +11,8 @@ Exec=readeck serve -config /readeck/config.toml
 User=nobody
 AutoUpdate=registry
 NoNewPrivileges=true
-Network=pasta:--ipv4-only
+Network=READECK.network
+IP=10.100.4.2
 PublishPort=50000:50000/tcp
 
 [Install]
