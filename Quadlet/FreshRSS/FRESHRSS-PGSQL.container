@@ -1,5 +1,5 @@
 [Unit]
-Description=PostgreSQL for Umami
+Description=PostgreSQL for FreshRSS
 Requires=FRESHRSS.service
 Before=FRESHRSS.service
 
