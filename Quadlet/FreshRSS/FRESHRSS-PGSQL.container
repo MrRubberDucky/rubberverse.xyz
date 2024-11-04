@@ -4,7 +4,6 @@ Requires=FRESHRSS.service
 Before=FRESHRSS.service
 
 [Container]
-# le advertisements about enterprise plans in my docker-entrypoitn.sh, maybe I'll start plugging patreon in mine heheh... (as if i'm worth a damn cent)
 Image=docker.io/bitnami/postgresql:latest
 ContainerName=freshrss-pgsql
 Mount=type=bind,src=/home/overseer/AppData/4_DATABASES/FRESHRSS_PGSQL,dst=/bitnami/postgresql,U=true,Z
@@ -15,11 +14,8 @@ Environment=POSTGRESQL_TIMEZONE=Europe/Warsaw
 Environment=POSTGRESQL_LOG_TIMEZONE=Europe/Warsaw
 AutoUpdate=registry
 NoNewPrivileges=true
-Network=pasta:--ipv4-only
-# Probably does nothing but my purpose with this is to break DNS resolution so it won't be able to externally connect by hostname at least.
-DNS=0.0.0.0
-# This is same as -t,5432
-PublishPort=127.0.0.1:5432:5432/tcp
+IP=10.100.3.3
+Network=FRESHRSS.network
 
 [Install]
 WantedBy=default-user.target
