@@ -4,7 +4,7 @@
  
 From [docs.podman.io](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html)
 
-Quadlet takes care of it and generates systemd services out of `.container`, `.volume`, `.network`, `.build`, `.pod`, `.build` and `.kube`, and allows you to control these generated services with systemd commands such as systemctl stop/start/restart, journalctl and so on.
+Quadlet takes care of it and generates systemd services out of `.container`, `.volume`, `.network`, `.pod`, `.build` and `.kube`, and allows you to control these generated services with systemd commands such as systemctl stop/start/restart, journalctl and so on.
 
 Pretty much using systemd as your container orchestrator. It also supports rootless operation and is a better alternative to podman-compose or docker-compose for deployments that don't need advanced orchestrator.
 
