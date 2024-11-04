@@ -1,0 +1,15 @@
+[Network]
+Driver=bridge
+# This only controls container DNS name resolution, not actual DNS by the looks of it.
+DisableDNS=true
+Gateway=10.100.3.1
+IPRange=10.100.3.1/24
+Subnet=10.100.3.1/24
+IPv6=false
+IPAMDriver=host-local
+NetworkName=freshrss
+PodmanArgs=-o=vlan=20
+PodmanArgs=-o=com.docker.network.bridge.name=freshrss
+PodmanArgs=-o=isolate=true
+# Need the internet connectivity, also yay fixed up the bridge mode having no internet by switching to nftables firewall driver in containers.conf
+Internal=false
