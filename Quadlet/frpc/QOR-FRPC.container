@@ -8,12 +8,12 @@ ContainerName=qor-frpc
 Secret=FRP__CLIENT_CERT,type=mount,target=/app/certs/client.crt,uid=1001,gid=1001,mode=0440
 Secret=FRP__CLIENT_KEY,type=mount,target=/app/certs/client.key,uid=1001,gid=1001,mode=0440
 Secret=FRP__CA_CERT,type=mount,target=/app/certs/ca.crt,uid=1001,gid=1001,mode=0440
-Volume=/home/overseer/AppData/1_CONFIGS/FRPC_NEW.TOML:/app/configs/frpc.toml:ro,Z
+Volume=${HOME}/AppData/1_CONFIGS/FRPC_NEW.TOML:/app/configs/frpc.toml:ro,Z
 User=frp_uclient
 ReadOnly=true
 AutoUpdate=registry
 NoNewPrivileges=true
-Network=pasta:--ipv4-only,-T,8443
+Network=pasta:--ipv4-only,-T,8443,-U,8443
 
 [Install]
 WantedBy=default.target
