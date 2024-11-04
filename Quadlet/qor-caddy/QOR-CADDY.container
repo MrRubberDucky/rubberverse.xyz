@@ -17,16 +17,15 @@ Environment=CADDY_ENVIRONMENT=prod
 Environment=FQDN=rubberverse.xyz
 Environment=ANALYTICS_ENDPOINT=https://analytics.rubberverse.xyz/api/send
 # Configuration + Data persistence
-Volume=/home/overseer/AppData/1_CONFIGS/CADDYFILE:/app/configs/Caddyfile:ro,Z
+Volume=${HOME}/AppData/1_CONFIGS/CADDYFILE:/app/configs/Caddyfile:ro,Z
 Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_DATA,destination=/app/.local/share/caddy,U=true,Z
 Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_CONFIG,destination=/app/.config/caddy,U=true,Z
 Volume=CADDY-LOGS:/app/logs:rw,Z
 # Auto Updates
 AutoUpdate=registry
 NoNewPrivileges=true
-# Fixes SELinux permission denied error on cross-mounted volumes
-SecurityLabelDisable=true
-Network=pasta:--ipv4-only,-T,8080,-T,9001,-T,3000
+Network=pasta:--ipv4-only,-T,8080,-T,9001,-T,9002,-T,3000,-T,50000
 PublishPort=127.0.0.1:8443:8443
+SecurityLabelDisable=true
 # User
 User=caddy
