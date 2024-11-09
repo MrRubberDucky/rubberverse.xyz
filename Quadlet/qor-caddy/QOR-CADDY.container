@@ -4,6 +4,9 @@ Description=Caddy QoR
 [Install]
 WantedBy=default.target
 
+[Service]
+Restart=on-failure
+
 [Container]
 Image=docker.io/mrrubberducky/qor-caddy:latest-alpine
 ContainerName=qor-caddy
@@ -29,3 +32,5 @@ PublishPort=127.0.0.1:8443:8443
 SecurityLabelDisable=true
 # User
 User=caddy
+# Just so I can browse files on filesystem and modify them in case I need to ever do so
+UserNS=keep-id
