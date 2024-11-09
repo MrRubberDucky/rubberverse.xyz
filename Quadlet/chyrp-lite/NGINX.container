@@ -3,6 +3,9 @@ Description=NGINX Container
 Requires=MARIADB.service
 After=MARIADB.service
 
+[Service]
+Restart=on-failure
+
 [Container]
 # https://github.com/Rubberverse/qor-nginx
 Image=docker.io/mrrubberducky/qor-chyrplite:latest-debian
@@ -28,6 +31,7 @@ Environment=PM_MIN_SPARE_SERVERS=1
 Environment=PM_MAX_SPARE_SERVERS=1
 Environment=NGINX_VALID_REFS="blog.rubberverse.xyz rubberverse.xyz"
 User=nginx_user
+UserNS=keep-id
 AutoUpdate=registry
 NoNewPrivileges=true
 Network=NGINX.network
