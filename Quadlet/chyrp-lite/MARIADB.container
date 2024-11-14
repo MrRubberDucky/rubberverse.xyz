@@ -2,6 +2,9 @@
 Description=MariaDB
 Before=NGINX.service
 
+[Service]
+Restart=on-failure
+
 [Install]
 WantedBy=default-user.target
 
