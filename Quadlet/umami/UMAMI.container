@@ -2,6 +2,9 @@
 Description=Umami Analytics
 After=UMAMI-PGSQL.service
 
+[Service]
+Restart=on-failure
+
 [Install]
 WantedBy=default-user.target
 
