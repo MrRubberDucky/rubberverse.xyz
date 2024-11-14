@@ -3,6 +3,9 @@ Description=PostgreSQL for Umami
 Requires=UMAMI.service
 Before=UMAMI.service
 
+[Service]
+Restart=on-failure
+
 [Container]
 Image=docker.io/bitnami/postgresql:latest
 ContainerName=umami-pgsql
