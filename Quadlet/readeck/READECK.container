@@ -1,6 +1,9 @@
 [Unit]
 Description=readeck
 
+[Service]
+Restart=on-failure
+
 [Container]
 # https://github.com/Rubberverse/qor-chyrp
 Image=codeberg.org/readeck/readeck:latest
