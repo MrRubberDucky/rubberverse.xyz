@@ -3,6 +3,9 @@ Description=PostgreSQL for FreshRSS
 Requires=FRESHRSS.service
 Before=FRESHRSS.service
 
+[Service]
+Restart=on-failure
+
 [Container]
 Image=docker.io/bitnami/postgresql:latest
 ContainerName=freshrss-pgsql
@@ -12,6 +15,7 @@ Secret=PGSQL__FRESHRSS_USER,type=env,target=POSTGRESQL_USER
 Environment=POSTGRESQL_DB=freshrssdb
 Environment=POSTGRESQL_TIMEZONE=Europe/Warsaw
 Environment=POSTGRESQL_LOG_TIMEZONE=Europe/Warsaw
+Environment=POSTGRESQL_REPLICATION_USE_PASSFILE=false
 AutoUpdate=registry
 NoNewPrivileges=true
 IP=10.100.3.3
