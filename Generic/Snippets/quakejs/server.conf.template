@@ -10,4 +10,4 @@ seta g_inactivity ${QUAKEJS_INACTIVITY}
 seta g_forcerespawn ${QUAKEJS_FORCERESPAWN}
 seta rconpassword ${QUAKEJS_RCONPASS}
 ${QUAKEJS_D_SETTINGS}
-vstr ${QUAKEJS_VSTR}
+${QUAKEJS_VSTR}
