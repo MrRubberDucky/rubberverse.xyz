@@ -44,13 +44,7 @@
 			static vps_ip/32 private_ranges
 		}
 		trusted_proxies_strict
-		timeouts {
-			read_body 1m
-			read_header 30s
-			write 30s
-			idle 5m
-		}
-		keepalive_interval 20s
+		keepalive_interval 30s
 	}
 	# Crowdsec Caddy bouncer configuration
 	crowdsec {
