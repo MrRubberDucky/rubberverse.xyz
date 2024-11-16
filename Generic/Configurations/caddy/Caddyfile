@@ -26,8 +26,7 @@
 		# Required for Source IP when proxying Caddy via frpc <-> frps (out, 443)
 			proxy_protocol {
 				timeout 5s
-					allow 127.0.0.1/8 vps_ip/32
-					deny 10.0.0.0/8
+					allow vps_ip/32 127.0.0.1/8 10.0.0.0/8
 					fallback_policy reject
 				}
 				# proxy_protocol needs to be before tls, otherwise it won't work.
@@ -74,12 +73,14 @@
 	}
 }
 (compress) {
+	# Compress
 	@senscache {
 		not path /includes/* /admin/* /login/ /logout/ /controls/ /ajax/ /send/api /api/ /feed/
 	}
 	encode @senscache zstd gzip
+	# Cache
 	@static {
-		path *.ico *.svg *.gif *.jpg *.jpeg *.png *.webp *.avif *.woff *.woff2 *.css
+		path *.ico *.svg *.gif *.jpg *.jpeg *.webp *.avif *.woff *.woff2 *.css *.png
 	}
 	header @static Cache-Control "public, max-age=604800"
 }
@@ -87,7 +88,17 @@
 {$FQDN} {
 	crowdsec
 	import dns_tls
-	redir https://blog.rubberverse.xyz{uri} permanent
+	# Route always goes top -> bottom so redirect is last and only gets triggered if none are matched
+	route {
+		# Bluesky PDS
+                reverse_proxy /.well-known/atproto-did* localhost:9003 {
+                        header_up +Host {http.reverse_proxy.upstream.hostport}
+                }
+                reverse_proxy /xrpc* localhost:9003 {
+                        header_up +Host {http.reverse_proxy.upstream.hostport}
+                }
+                redir https://blog.rubberverse.xyz{uri} permanent
+	}
 }
 www.{$FQDN} {
 	crowdsec
@@ -107,7 +118,7 @@ blog.{$FQDN} {
 			key {client_ip}
 			events 3
 			# It's not like a lot of content gets pushed so often to need frequent checks
-			window 5m
+			window 30m
 		}
 		zone blog_login {
 			match {
@@ -117,6 +128,7 @@ blog.{$FQDN} {
 			events 5
 			window 1m
 		}
+		log_key
 	}
 	reverse_proxy localhost:9001
 	@noadmin {
@@ -170,12 +182,7 @@ read.{$FQDN} {
 	import compress
 	reverse_proxy localhost:50000
 	log {
-		output file /app/logs/readeck.log {
-			mode 644
-			roll_size 20M
-			roll_uncompressed
-			roll_keep_for 3d
-		}
+		output discard
 	}
 }
 news.{$FQDN} {
