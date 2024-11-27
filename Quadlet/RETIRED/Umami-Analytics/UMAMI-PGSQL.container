@@ -1,0 +1,28 @@
+[Unit]
+Description=PostgreSQL for Umami
+Before=UMAMI.service
+
+[Service]
+Restart=on-failure
+
+[Container]
+Image=docker.io/bitnami/postgresql:latest
+ContainerName=umami-pgsql
+Mount=type=bind,src=/home/overseer/AppData/4_DATABASES/UMAMI_PGSQL,dst=/bitnami/postgresql,U=true,Z
+Secret=PGSQL__UMAMI_PW,type=env,target=POSTGRESQL_PASSWORD
+Secret=PGSQL__UMAMI_USER,type=env,target=POSTGRESQL_USER
+Environment=POSTGRESQL_DATABASE=umamidb
+Environment=POSTGRESQL_TIMEZONE=Europe/Warsaw
+Environment=POSTGRESQL_LOG_TIMEZONE=Europe/Warsaw
+Environment=POSTGRESQL_REPLICATION_USE_PASSFILE=false
+HealthCmd=pg_isready -d umamidb
+HealthInterval=5s
+HealthRetries=5
+HealthTimeout=5s
+Notify=healthy
+AutoUpdate=registry
+NoNewPrivileges=true
+Network=UMAMI.network
+
+[Install]
+WantedBy=default-user.target

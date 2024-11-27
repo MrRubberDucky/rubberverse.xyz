@@ -1,202 +1,222 @@
 {
-	# General configuration
-	http_port 8181
-	https_port 8443
-	# Admin endpoint for configuration reload, only listens on localhost
-	admin 127.0.0.1:2019 {
-		origins localhost 127.0.0.1:2019
-		enforce_origin
-	}
-	# Plugin ordering
-	order crowdsec first
-	order umami after route
-	order rate_limit after basic_auth
-	# Default caddy log, outputs to container stdout
-	log default {
-		output stdout
-		level INFO
-		format json
-	}
-	# ACME Certificate Authority URL, email to use and ocsp stapling interval
-	acme_ca https://acme-v02.api.letsencrypt.org/directory
-	email {$ACME_EMAIL}
-	ocsp_interval 3d
-	servers {
-		listener_wrappers {
-		# Required for Source IP when proxying Caddy via frpc <-> frps (out, 443)
-			proxy_protocol {
-				timeout 5s
-					allow vps_ip/32 127.0.0.1/8 10.0.0.0/8
-					fallback_policy reject
-				}
-				# proxy_protocol needs to be before tls, otherwise it won't work.
-				http_redirect
-				proxy_protocol
-				tls
-			}
-		trusted_proxies combine {
-		# Trust cloudflre proxies
-			cloudflare {
-				interval 12h
-				timeout 30s
-			}
-			static vps_ip/32 private_ranges
-		}
-		trusted_proxies_strict
-		keepalive_interval 30s
-	}
-	# Crowdsec Caddy bouncer configuration
-	crowdsec {
-		api_url http://localhost:8080
-		api_key {$CROWDSEC_LAPI_KEY}
-		ticker_interval 15s
-	}
+    # General configuration
+    http_port 8181
+    https_port 8443
+    # Admin endpoint for configuration reload, only listens on localhost
+    admin 127.0.0.1:2019 {
+        origins localhost 127.0.0.1:2019
+        enforce_origin
+    }
+    # Plugin ordering
+    order crowdsec first
+    order rate_limit after basic_auth
+    # Default caddy log, outputs to container stdout
+    log default {
+        output stdout
+        level INFO
+        format json
+    }
+    # ACME Certificate Authority URL, email to use and ocsp stapling interval
+    acme_ca https://acme-v02.api.letsencrypt.org/directory
+    email {$ACME_EMAIL}
+    ocsp_interval 3d
+    servers {
+        listener_wrappers {
+            # Required for Source IP when proxying Caddy via frpc <-> frps (out, 443)
+            proxy_protocol {
+                timeout 5s
+                    allow vps_ip/32 127.0.0.1/8 10.0.0.0/8
+                    fallback_policy reject
+                }
+            # proxy_protocol needs to be before tls, otherwise it won't work.
+            http_redirect
+            proxy_protocol
+            tls
+        }
+        trusted_proxies combine {
+        # Trust cloudflre proxies
+            cloudflare {
+                interval 12h
+                timeout 30s
+            }
+            static vps_ip/32 private_ranges
+        }
+    }
+    trusted_proxies_strict
+    keepalive_interval 30s
+    # Crowdsec Caddy bouncer configuration
+    crowdsec {
+        api_url http://localhost:8080
+        api_key {$CROWDSEC_LAPI_KEY}
+        ticker_interval 15s
+    }
 }
 (prod_headers) {
-	header {
-		Permissions-Policy "cross-origin-isolated=(self)"
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
-		Access-Control-Allow-Origin "https://rubberverse.xyz, https://*.rubberverse.xyz"
-		Cross-Origin-Opener-Policy "same-origin-allow-popups"
-		Cross-Origin-Resource-Policy "cross-origin"
-		X-Content-Type-Options "nosniff"
-		X-XSS-Protection "1; mode=block"
-		X-Frame-Options "SAMEORIGIN"
-		X-Robots-Tag "nofollow, noimageindex"
-		Referrer-Policy "same-origin"
-	}
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        Content-Security-Policy "frame-ancestors 'self' data: https://*.rubberverse.xyz https://challenges.cloudflare.com; frame-src 'self' https://comments.rubberverse.xyz https://challenges.cloudfla>
+        Access-Control-Allow-Origin "https://analytics.rubberverse.xyz", "https://blog.rubberverse.xyz", "https://comments.rubberverse.xyz"
+        Access-Control-Allow-Methods "POST, GET, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type,Origin,Accept"
+        Cross-Origin-Opener-Policy "same-origin-allow-popups"
+        Cross-Origin-Resource-Policy "cross-origin"
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        X-Frame-Options "SAMEORIGIN"
+        X-Robots-Tag "nofollow, noimageindex"
+        Referrer-Policy "same-origin"
+    }
 }
 (dns_tls) {
-	tls {
-		dns cloudflare {$CF_API_TOKEN}
-		resolvers 1.1.1.1 1.0.0.1
-	}
+    tls {
+        dns cloudflare {$CF_API_TOKEN}
+        resolvers 1.1.1.1 1.0.0.1
+    }
 }
 (compress) {
-	# Compress
-	@senscache {
-		not path /includes/* /admin/* /login/ /logout/ /controls/ /ajax/ /send/api /api/ /feed/
-	}
-	encode @senscache zstd gzip
-	# Cache
-	@static {
-		path *.ico *.svg *.gif *.jpg *.jpeg *.webp *.avif *.woff *.woff2 *.css *.png
-	}
-	header @static Cache-Control "public, max-age=604800"
+    # Compress
+    @senscache {
+        not path /includes/* /admin/* /login/ /logout/ /controls/ /ajax/ /send/api /api/ /feed/
+    }
+    encode @senscache zstd gzip
+    # Cache
+    @static {
+        path *.ico *.svg *.gif *.jpg *.jpeg *.webp *.avif *.woff *.woff2 *.css *.png
+    }
+    header @static Cache-Control "public, max-age=31536000, immutable"
 }
 # Rubberverse.xyz
 {$FQDN} {
-	crowdsec
-	import dns_tls
-	# Route always goes top -> bottom so redirect is last and only gets triggered if none are matched
-	route {
-		# Bluesky PDS
-                reverse_proxy /.well-known/atproto-did* localhost:9003 {
-                        header_up +Host {http.reverse_proxy.upstream.hostport}
-                }
-                reverse_proxy /xrpc* localhost:9003 {
-                        header_up +Host {http.reverse_proxy.upstream.hostport}
-                }
-                redir https://blog.rubberverse.xyz{uri} permanent
-	}
+    crowdsec
+    import dns_tls
+    route {
+        # Bluesky PDS on main domain
+        reverse_proxy /.well-known/atproto-did* localhost:9003 {
+            header_up +Host {http.reverse_proxy.upstream.hostport}
+        }
+        reverse_proxy /xrpc* localhost:9003 {
+            header_up +Host {http.reverse_proxy.upstream.hostport}
+        }
+        # Redirect other requests back to blog
+        redir https://blog.rubberverse.xyz{uri} permanent
+    }
 }
 www.{$FQDN} {
-	crowdsec
-	import dns_tls
-	redir https://blog.rubberverse.xyz{uri} permanent
+    crowdsec
+    import dns_tls
+    redir https://blog.rubberverse.xyz{uri} permanent
 }
 blog.{$FQDN} {
-	crowdsec
-	import dns_tls
-	import prod_headers
-	import compress
-	rate_limit {
-		zone blog_feed {
-			match {
-				path /feed/
-			}
-			key {client_ip}
-			events 3
-			# It's not like a lot of content gets pushed so often to need frequent checks
-			window 30m
-		}
-		zone blog_login {
-			match {
-				path /login/ /logout/ /register/
-			}
-			key {client_ip}
-			events 5
-			window 1m
-		}
-		log_key
-	}
-	reverse_proxy localhost:9001
-	@noadmin {
-		not path /uploads/* /includes/* /admin/* /login/ /logout/ /controls/ /ajax/
-	}
-	umami @noadmin {
-		event_endpoint "{$ANALYTICS_ENDPOINT}"
-		website_uuid "<redacted>"
-		allowed_extensions "" .htm .html .php
-		client_ip_header "Client_ip"
-		trusted_ip_header "X-Forwarded-For"
-		static_metadata {
-			service chyrp-lite
-			}
-	}
-	log {
-		output file /app/logs/blog.log {
-		# Done so Crowdsec container can read Caddy log files
-			mode 644
-			roll_size 20M
-			roll_uncompressed
-			roll_keep_for 3d
-		}
-	}
+    crowdsec
+    import dns_tls
+    import prod_headers
+    import compress
+    file_server
+    log {
+        output file /app/logs/blog.log {
+        # Done so Crowdsec container can read Caddy log files
+            mode 644
+            roll_size 20M
+            roll_uncompressed
+            roll_keep_for 3d
+        }
+    }
 }
 analytics.{$FQDN} {
-	crowdsec
-	import dns_tls
-	import prod_headers
-	import compress
-	reverse_proxy localhost:3000
-	header Access-Control-Allow-Headers DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization {
-		defer
-	}
-	header * {
-		+Access-Control-Allow-Methods "GET, POST, OPTIONS"
-	}
-	log {
-		output file /app/logs/analytics.log {
-			mode 644
-			roll_size 20M
-			roll_uncompressed
-			roll_keep_for 3d
-		}
-	}
+    crowdsec
+    import dns_tls
+    import prod_headers
+    import compress
+    reverse_proxy localhost:3000
+    log {
+        output file /app/logs/analytics.log {
+            mode 644
+            roll_size 20M
+            roll_uncompressed
+            roll_keep_for 3d
+        }
+    }
 }
 read.{$FQDN} {
-	crowdsec
-	import dns_tls
-	import prod_headers
-	import compress
-	reverse_proxy localhost:50000
-	log {
-		output discard
-	}
+    import dns_tls
+    import prod_headers
+    import compress
+    reverse_proxy localhost:50000
+    log {
+        output discard
+    }
 }
 news.{$FQDN} {
-	crowdsec
-	import dns_tls
-	import prod_headers
-	import compress
-	reverse_proxy localhost:9002
-	log {
-		output file /app/logs/news.log {
-			mode 644
-			roll_size 20M
-			roll_uncompressed
-			roll_keep_for 3d
-		}
-	}
+    crowdsec
+    import dns_tls
+    import prod_headers
+    import compress
+    reverse_proxy localhost:9002
+    log {
+        output file /app/logs/news.log {
+            mode 644
+            roll_size 20M
+            roll_uncompressed
+            roll_keep_for 3d
+        }
+    }
+}
+comments.{$FQDN} {
+    crowdsec
+    import dns_tls
+    import compress
+    reverse_proxy localhost:9006 {
+        header_up Content-Security-Policy "frame-ancestors 'self' data: https://*.rubberverse.xyz https://challenges.cloudflare.com; frame-src 'self' https://comments.rubberverse.xyz https://challenges.cloudflare.com; script-src 'self' https://comments.rubberverse.xyz https://analytics.rubberverse.xyz https://challenges.cloudflare.com https://cdn.jsdelivr.net"
+        header_up Cross-Origin-Opener-Policy "same-origin-allow-popups"
+        header_up Cross-Origin-Resource-Policy "cross-origin"
+    }
+    log {
+        output file /app/logs/comments.log {
+            mode 644
+            roll_size 20M
+            roll_uncompressed
+            roll_keep_for 3d
+        }
+    }
+}
+social.{$FQDN} {
+    import dns_tls
+    @websockets {
+        header Connection *Upgrade*
+        header Upgrade websocket
+    }
+    reverse_proxy @websockets localhost:3001
+    reverse_proxy localhost:3001
+    # Headers
+    @staticD {
+        path *.ico *.svg *.gif *.jpg *.jpeg *.webp *.avif *.woff *.woff2 *.png
+    }
+    # Caching Header
+    header @staticD Cache-Control "public, max-age=31536000, immutable" {
+        defer
+    }
+    # Host Header
+    header Host {http.reverse_proxy.upstream.hostport} {
+        defer
+    }
+    # Client IP Header, Caddy fails to set it and it's needed for proper rate limit.
+    header X-Forwarded-For {client_ip} {
+        defer
+    }
+    # HSTS Header
+    header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" {
+        defer
+    }
+    header X-Content-Type-Options "nosniff"
+    header X-XSS-Protection "1; mode=block"
+    # Header for crawlers
+    header X-Robots-Tag "noimageindex"
+    log {
+        output file /app/logs/social.log {
+            mode 644
+            roll_size 100M
+            roll_uncompressed
+            roll_keep_for 3d
+        }
+    }
 }

@@ -1,0 +1,32 @@
+[Unit]
+Description=PostgreSQL for Sharkey
+Requires=SHARKEY-REDIS.service
+Before=SHARKEY-WEB.service
+Before=SHARKEY-REDIS.service
+Before=SHARKEY-MEILI.service
+
+[Service]
+Restart=on-failure
+
+[Container]
+Image=docker.io/bitnami/postgresql:latest
+ContainerName=sharkey-pgsql
+Mount=type=bind,src=/home/overseer/AppData/4_DATABASES/SHARKEY_PGSQL,dst=/bitnami/postgresql,U=true,Z
+Secret=PGSQL__SHARKEY_PW,type=env,target=POSTGRESQL_PASSWORD
+Secret=PGSQL__SHARKEY_USER,type=env,target=POSTGRESQL_USER
+Environment=POSTGRESQL_DATABASE=sharkeydb
+Environment=POSTGRESQL_TIMEZONE=Europe/Warsaw
+Environment=POSTGRESQL_LOG_TIMEZONE=Europe/Warsaw
+Environment=POSTGRESQL_REPLICATION_USE_PASSFILE=false
+HealthCmd=pg_isready -d sharkeydb
+HealthInterval=5s
+HealthRetries=5
+HealthTimeout=5s
+Notify=healthy
+AutoUpdate=registry
+NoNewPrivileges=true
+UserNS=keep-id
+Pod=SHARKEY.pod
+
+[Install]
+WantedBy=default-user.target

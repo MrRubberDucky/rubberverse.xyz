@@ -1,0 +1,36 @@
+[Unit]
+Description=Bluesky Social PDS
+
+[Service]
+Restart=on-failure
+
+[Container]
+Image=ghcr.io/bluesky-social/pds:latest
+ContainerName=bluesky-pds
+Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/BLUESKY-PDS,dst=/pds,U=true,Z
+# Sensitive
+Secret=PDS_PLC_ROTATION_KEY,type=env,target=PDS_PLC_ROTATION_KEY_K256_PRIVATE_KEY_HEX
+Secret=BLUESKY_SMTP_KEY,type=env,target=PDS_EMAIL_SMTP_URL
+Secret=BLUESKY_JWT_SECRET,type=env,target=PDS_JWT_SECRET
+Secret=BLUESKY_ADMIN_PASSWORD,type=env,target=PDS_ADMIN_PASSWORD
+# Non-sensitive
+Environment=PDS_HOSTNAME=rubberverse.xyz
+Environment=PDS_DATA_DIRECTORY=/pds
+Environment=PDS_BLOBSTORE_DISK_LOCATION=/pds/blocks
+Environment=PDS_DID_PLC_URL=https://plc.directory
+Environment=PDS_BSKY_APP_VIEW_URL=https://api.bsky.app
+Environment=PDS_BSKY_APP_VIEW_DID=did:web:api.bsky.app
+Environment=PDS_REPORT_SERVICE_URL=https://mod.bsky.app
+Environment=PDS_REPORT_SERVICE_DID=did:plc:ar7c4by46qjdydhdevvrndac
+Environment=PDS_CRAWLERS=https://bsky.network
+Environment=LOG_ENABLED=true
+Environment=PDS_EMAIL_FROM_ADDRESS=no-reply@rubberverse.xyz
+Environment=PDS_PORT=9003
+User=node
+UserNS=keep-id
+AutoUpdate=registry
+NoNewPrivileges=true
+Pod=PDS.pod
+
+[Install]
+WantedBy=default.target

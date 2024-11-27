@@ -1,0 +1,29 @@
+# Unused
+[Unit]
+Description=(Re)Muse - Discord Music Bot
+
+[Install]
+WantedBy=default.target
+#Requires=network-online.target
+
+[Container]
+# https://github.com/Rubberverse/various-dockerfiles/blob/main/muse/Dockerfile
+Image=localhost/muse:latest
+ContainerName=muse
+Secret=DISCORD__BOT_MUSE,type=env,target=DISCORD_TOKEN
+Secret=DISCORD__BOT_MUSE_YT,type=env,target=YOUTUBE_API_KEY
+Secret=DISCORD__BOT_MUSE_SPOTID,type=env,target=SPOTIFY_CLIENT_ID
+Secret=DISCORD__BOT_MUSE_SPOTSC,type=env,target=SPOTIFY_CLIENT_SECRET
+Tmpfs=/tmp
+Environment=ENABLE_SPONSORBLOCK=true
+Environment=SPONSORBLOCK_TIMEOUT=300
+Environment=BOT_STATUS=idle
+Environment=BOT_ACTIVITY_TYPE=streaming
+Environment=BOT_ACTIVITY=OG_MrRubberDucky
+Environment=BOT_ACTIVITY_URL=https://twitch.tv/og_mrrubberducky
+Environment=REGISTER_COMMANDS_ON_BOT=true
+Mount=type=bind,src=/root/AppData/2_PERSIST/REMUSE,dst=/app/data,rw=true,U=true
+User=muse
+UserNS=keep-id:uid=1001,gid=1001
+Network=DMZ.network
+IP=10.20.1.30

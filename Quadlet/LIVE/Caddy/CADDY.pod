@@ -1,0 +1,5 @@
+[Pod]
+Network=pasta:--ipv4-only,-T,8080,-T,9001,-T,9002,-T,9003,-T,3000,-T,3001,-T,50000,-T,50001
+PublishPort=127.0.0.1:8443:8443/tcp
+PublishPort=127.0.0.1:8443:8443/udp
+PublishPort=127.0.0.1:8181:8181/tcp

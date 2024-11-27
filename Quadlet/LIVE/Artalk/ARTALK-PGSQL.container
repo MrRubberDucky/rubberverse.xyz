@@ -1,0 +1,28 @@
+[Unit]
+Description=PostgreSQL for FreshRSS
+Before=ARTALK.service
+
+[Service]
+Restart=on-failure
+
+[Container]
+Image=docker.io/bitnami/postgresql:latest
+ContainerName=artalk-pgsql
+Mount=type=bind,src=/home/overseer/AppData/4_DATABASES/ARTALK_PGSQL,dst=/bitnami/postgresql,U=true,Z
+Secret=PGSQL__ARTALK_PW,type=env,target=POSTGRESQL_PASSWORD
+Secret=PGSQL__ARTALK_USER,type=env,target=POSTGRESQL_USER
+Environment=POSTGRESQL_DB=artalkdb
+Environment=POSTGRESQL_TIMEZONE=Europe/Warsaw
+Environment=POSTGRESQL_LOG_TIMEZONE=Europe/Warsaw
+Environment=POSTGRESQL_REPLICATION_USE_PASSFILE=false
+HealthCmd=pg_isready -d artalksdb
+HealthInterval=5s
+HealthRetries=5
+HealthTimeout=5s
+Notify=healthy
+AutoUpdate=registry
+NoNewPrivileges=true
+Pod=ARTALK.pod
+
+[Install]
+WantedBy=default-user.target

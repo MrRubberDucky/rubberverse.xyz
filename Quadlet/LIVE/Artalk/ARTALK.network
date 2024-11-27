@@ -1,0 +1,10 @@
+[Network]
+Driver=bridge
+DisableDNS=true
+IPv6=false
+IPAMDriver=host-local
+NetworkName=artalk
+PodmanArgs=-o=vlan=20
+PodmanArgs=-o=com.docker.network.bridge.name=artalk
+PodmanArgs=-o=isolate=true
+Internal=false
