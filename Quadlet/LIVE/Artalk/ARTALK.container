@@ -1,23 +1,31 @@
 [Unit]
+# Unit description
 Description=ArTalk comment system
 Requires=ARTALK-PGSQL.service
 
 [Service]
 Restart=on-failure
 
-[Container]
-Image=docker.io/artalk/artalk-go:latest
-ContainerName=artalk
-Volume=${HOME}/AppData/2_PERSIST/ARTALK:/data:rw,U,Z,nodev,nosuid,rbind
-Volume=${HOME}/AppData/1_CONFIGS/artalk.yaml:/app/artalk.yaml:ro
-Volume=${HOME}/AppData/1_CONFIGS/filtered_words.txt:/app/keywords.txt:ro
-Environment=TZ=Europe/Warsaw
-Exec=artalk -c /app/artalk.yaml
-User=1001:1001
-UserNS=keep-id
-AutoUpdate=registry
-NoNewPrivileges=true
-Pod=ARTALK.pod
-
 [Install]
 WantedBy=default.target
+
+[Container]
+# Base
+Image=docker.io/artalk/artalk-go:latest
+ContainerName=artalk
+Timezone=Europe/Warsaw
+# Environments
+Environment=TZ=Europe/Warsaw
+# Volumes
+Volume=${HOME}/AppData/2_PERSIST/ARTALK:/data:rw,U,Z,nodev,nosuid,rbind
+Volume=${HOME}/AppData/1_CONFIGS/filtered_words.txt:/app/filtered_keywords.txt:ro,U,Z
+# Labels
+AutoUpdate=registry
+NoNewPrivileges=true
+# Capabilities
+DropCapability=all
+# Container User
+User=nobody
+UserNS=auto
+# Pod
+Pod=ARTALK.pod
