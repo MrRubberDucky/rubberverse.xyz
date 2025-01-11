@@ -1,16 +1,24 @@
 [Unit]
 Description=Crowdsecurity Daemon
 
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
 [Container]
+# Base
 Image=docker.io/crowdsecurity/crowdsec:latest
 ContainerName=crowdsec
-Secret=CROWDSEC__BOUNCER_CADDY,type=env,target=BOUNCER_KEY_CADDY
+Timezone=Europe/Warsaw
+# Secrets
 Secret=CROWDSEC__ENROLL_KEY,type=env,target=ENROLL_KEY
 Secret=CROWDSEC__COLLECTIONS,type=env,target=COLLECTIONS
 Secret=CROWDSEC__APPSEC_CFG,type=env,target=APPSEC_CONFIGS
+Secret=CROWDSEC__BOUNCER_CADDY,type=env,target=BOUNCER_KEY_CADDY
 Secret=CROWDSEC__DISABLE_SCENARIOS,type=env,target=DISABLE_SCENARIOS
-Environment=GID=1001
-Environment=UID=1001
+# Environments
 Environment=LEVEL_INFO=true
 Environment=ENROLL_INSTANCE_NAME=PODMAN-VM
 Environment=ENROLL_TAGS=container,local
@@ -19,23 +27,26 @@ Environment=ENABLE_CONSOLE_MANAGEMENT=""
 Environment=DO_HUB_UPGRADE=true
 Environment=TZ=Europe/Warsaw
 Environment=CUSTOM_HOSTNAME=container-lapi
-# Crowdsec data integrity and structure
-Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/CROWDSEC_CFG,dst=/etc/crowdsec,U=true,Z
-Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/CROWDSEC_DATA,dst=/var/lib/crowdsec/data,U=true,Z
-# Crowdsec notification setup and whitelist
+# Volumes
 Volume=${HOME}/AppData/1_CONFIGS/ACQUIS.YAML:/etc/crowdsec/acquis.yaml:Z,ro
 Volume=${HOME}/AppData/1_CONFIGS/PROFILES.YAML:/etc/crowdsec/profiles.yaml:Z,ro
 Volume=${HOME}/AppData/1_CONFIGS/MYWHITELIST.YAML:/etc/crowdsec/postoverflows/s01-whitelist/rdns.yaml:Z,ro
 Volume=${HOME}/AppData/1_CONFIGS/MYWHITELIST2.YAML:/etc/crowdsec/postoverflows/s01-whitelist/rdns2.yaml:Z,ro
 Volume=${HOME}/AppData/1_CONFIGS/MYWHITELIST3.YAML:/etc/crowdsec/parsers/s02-enrich/mywhitelist.yaml:Z,ro
-# Need to create it manually
-Volume=CADDY-LOGS:/var/log/caddy:ro,Z
+Volume=CADDY-LOGS:/var/log/caddy:ro,z
+# Mounts
+Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/CROWDSEC_CFG,dst=/etc/crowdsec,U=true,Z
+Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/CROWDSEC_DATA,dst=/var/lib/crowdsec/data,U=true,Z
+# Tmpfs
 Tmpfs=/usr/local/lib/crowdsec
-# Typical things
-SecurityLabelDisable=true
-Timezone=Europe/Warsaw
+# Labels
 AutoUpdate=registry
+NoNewPrivileges=true
+# Capabilities
+DropCapability=all
+# Container User
+User=nobody
+UserNS=auto
+# Pod
 Pod=CROWDSEC.pod
-
-[Install]
-WantedBy=default.target
+StartWithPod=true
