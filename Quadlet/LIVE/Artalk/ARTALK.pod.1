@@ -1,0 +1,9 @@
+[Pod]
+# Name of the pod, gets prefixed with -infra
+PodName=artalk
+# Network, affects all containers attached to pod
+Network=ARTALK.network
+# Ports, affects all containers attached to pod
+PublishPort=127.0.0.1:9006:9006
+# User namespace
+UserNS=auto
