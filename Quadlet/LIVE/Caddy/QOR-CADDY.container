@@ -1,4 +1,5 @@
 [Unit]
+# Unit description
 Description=Caddy QoR
 
 [Service]
@@ -8,27 +9,32 @@ Restart=on-failure
 WantedBy=default.target
 
 [Container]
-Image=docker.io/mrrubberducky/qor-caddy:latest-alpine
+# Base
+Image=ghcr.io/rubberverse/qor-caddy:latest-alpine
 ContainerName=qor-caddy
-# Sensitive Environments
+Timezone=Europe/Warsaw
+# Secrets
+Secret=ACME__EMAIL,type=env,target=ACME_EMAIL
 Secret=CF__DNS_API,type=env,target=CF_API_TOKEN
 Secret=CROWDSEC__LAPI_KEY,type=env,target=CROWDSEC_LAPI_KEY
-Secret=ACME__EMAIL,type=env,target=ACME_EMAIL
-# Normal Environments
+# Environments
 Environment=CONFIG_PATH=/app/configs/Caddyfile
 Environment=CADDY_ENVIRONMENT=prod
 Environment=FQDN=rubberverse.xyz
-# Configuration + Data persistence
-Volume=/home/overseer/AppData/1_CONFIGS/CADDYFILE:/app/configs/Caddyfile:ro,Z
+# Volumes
+Volume=${HOME}/AppData/1_CONFIGS/CADDYFILE:/app/configs/Caddyfile:ro,Z
+Volume=${HOME}/AppData/3_USER/html:/app/www/html:ro,Z
+Volume=CADDY-LOGS:/app/logs:rw,z,U
+# Mounts
 Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_DATA,destination=/app/.local/share/caddy,U=true,Z
 Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_CONFIG,destination=/app/.config/caddy,U=true,Z
-#Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_LOGS,destination=/app/logs,U=true,Z
-Volume=CADDY-LOGS:/app/logs:rw,Z,U
-# Auto Updates
+# Labels
 AutoUpdate=registry
 NoNewPrivileges=true
-Pod=CADDY.pod
-SecurityLabelDisable=true
-# User
+# Capabilities
+DropCapability=all
+# Container User
 User=caddy
-UserNS=keep-id
+# Pod
+Pod=CADDY.pod
+StartWithPod=true
