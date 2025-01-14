@@ -1,0 +1,79 @@
+# Snippets for easier importing and cleaner main Caddyfile
+# Modular Caddyfile v1.0
+(headers) {
+    header {
+        # HSTS
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        # CSP
+        Content-Security-Policy "frame-ancestors 'self' data: https://*.rubberverse.xyz https://challenges.cloudflare.com; frame-src 'self' https://comments.rubberverse.xyz https://challenges.cloudflare.com; upgrade-insecure-requests;"
+        # Origin
+        Access-Control-Allow-Origin "https://analytics.rubberverse.xyz", "https://blog.rubberverse.xyz", "https://comments.rubberverse.xyz"
+        # Headers
+        Access-Control-Allow-Headers "Content-Type,Origin,Accept"
+        # COOP
+        Cross-Origin-Opener-Policy "same-origin-allow-popups"
+        # CORP
+        Cross-Origin-Resource-Policy "cross-origin"
+        # X-*
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        X-Frame-Options "SAMEORIGIN"
+        X-Robots-Tag "nofollow, noimageindex"
+        # Referrer
+        Referrer-Policy "same-origin"
+    }
+}
+(acme) {
+    tls {
+        dns cloudflare {$CF_API_TOKEN}
+        resolvers 1.1.1.1 1.0.0.1
+    }
+}
+(compress) {
+    # Compress
+    @senscache {
+        # Pass arguments to it
+        not path {args[0]}
+    }
+    encode @senscache zstd gzip
+    # Cache
+    @static {
+        path *.ico *.svg *.gif *.jpg *.jpeg *.webp *.avif *.woff *.woff2 *.css *.png
+    }
+    header @static Cache-Control "public, max-age=31536000, immutable"
+}
+(websockets) {
+    @websockets {
+        header Connection *Upgrade*
+        header Upgrade websock
+    }
+    reverse_proxy @websockets {args[0]}
+}
+(failed_login) {
+    # Prevent useless bruteforcing by ratelimiting login endpoint, prolly doesn't work that great.
+    # Needs to be inside route block
+        rate_limit {
+            zone {args[0]}_login {
+                match {
+                    method POST
+                    path {args[1]}
+                }
+                key {client_ip}
+                events 3
+                window 15m
+            }
+            log_key
+        }
+        reverse_proxy {args[2]}
+}
+(umami) {
+        # Needs to be inside route block
+        umami {
+            event_endpoint "{args[0]}"
+            website_uuid "{args[1]}"
+            allowed_extensions "" .html .htm
+            trusted_ip_header "X-Forwarded-For"
+            client_ip_header {client_ip}
+            device_detection
+        }
+}
