@@ -1,0 +1,39 @@
+[Unit]
+Description=PostgreSQL for Pocket-ID
+Before=POCKETID.service
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+[Container]
+# Base
+Image=docker.io/bitnami/postgresql:17.2.0-debian-12-r5
+ContainerName=pocketid-pgsql
+Timezone=Europe/Warsaw
+# Secrets
+Secret=POCKETID_USERNAME,type=env,target=POSTGRESQL_USERNAME
+Secret=POCKETID_PASSWORD,type=env,target=POSTGRESQL_PASSWORD
+# Environments
+Environment=POSTGRESQL_DATABASE=pocket-id
+Environment=POSTGRESQL_TIMEZONE=Europe/Warsaw
+Environment=POSTGRESQL_LOG_TIMEZONE=Europe/Warsaw
+Environment=POSTGRESQL_REPLICATION_USE_PASSFILE=false
+# Mounts
+Mount=type=bind,src=/home/overseer/AppData/4_DATABASES/POCKETID_PGSQL,dst=/bitnami/postgresql,U=true,Z
+# Tmpfs - needed for container to be able to store it's shared memory
+Tmpfs=/dev/shm
+# Health check
+HealthCmd="pg_isready -d pocket-id"
+HealthInterval=5s
+HealthRetries=5
+HealthTimeout=5s
+Notify=healthy
+# Labels
+AutoUpdate=registry
+NoNewPrivileges=true
+# User
+UserNS=auto
+Pod=PocketID.pod
