@@ -1,0 +1,45 @@
+[Unit]
+Description=Caddy QoR
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+[Container]
+Image=ghcr.io/rubberverse/qor-caddy:latest-alpine
+ContainerName=qor-caddy
+# Secrets - ACME
+Secret=ACME_EMAIL,type=env,target=ACME_EMAIL
+# Secrets - Basic Auth
+Secret=BAUTH_USR,type=env,target=BAUTH_USR
+# Environments - Container
+Environment=CONFIG_PATH=/app/configs/Caddyfile
+Environment=CADDY_ENVIRONMENT=prod
+Environment=FQDN=localhost.rubberverse.xyz
+# Normal Environments
+Environment=CONFIG_PATH=/app/configs/Caddyfile
+Environment=CADDY_ENVIRONMENT=prod
+Environment=FQDN=localhost.rubberverse.xyz
+# Volumes - Configs
+Volume=${HOME}/AppData/1_CONFIGS/GlobalConfig:/app/configs/GlobalConfig:ro,Z
+Volume=${HOME}/AppData/1_CONFIGS/ImportSnippets:/app/configs/ImportSnippets:ro,Z
+Volume=${HOME}/AppData/1_CONFIGS/Caddyfile:/app/configs/Caddyfile:ro,Z
+# Volumes - Sites
+Volume=${HOME}/AppData/3_USER/html:/app/www/html:ro,Z,U
+# Volumes - Certificate mount for Auth
+Volume=${HOME}/certificates/fullchain.pem:/app/certificates/fullchain.pem:ro,Z
+Volume=${HOME}/certificates/privkey.pem:/app/certificates/privkey.pem:ro,Z
+# Volumes - Logging
+Volume=CADDY-LOGS:/app/logs:rw,z
+# Mounts
+Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_DATA,destination=/app/.local/share/caddy,U=true,Z
+Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/CADDY_CONFIG,destination=/app/.config/caddy,U=true,Z
+# Auto Updates
+AutoUpdate=registry
+NoNewPrivileges=true
+Pod=Caddy.pod
+# User
+User=caddy
+UserNS=auto
