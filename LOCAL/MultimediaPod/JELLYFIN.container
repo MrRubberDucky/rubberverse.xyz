@@ -1,0 +1,29 @@
+[Unit]
+Description=Jellyfin Media Server
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+[Container]
+# Base
+Image=ghcr.io/jellyfin/jellyfin:latest
+ContainerName=jellyfin
+Timezone=Europe/Warsaw
+AddDevice=/dev/dri
+# Environments
+Environment=JELLYFIN_PublishedServerUrl=jellyfin.localhost.rubberverse.xyz
+# Mounts
+Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/JELLYFIN_CONFIG,destination=/config,U=true,Z
+Mount=type=bind,source=/home/overseer/AppData/2_PERSIST/JELLYFIN_CACHE,destination=/cache,U=true,Z
+Mount=type=bind,source=/media/Music,destination=/media,z,ro=true
+# Labels
+AutoUpdate=registry
+NoNewPrivileges=true
+# User
+User=1001:1001
+UserNS=auto
+# Network
+Pod=Jellyfin.pod
