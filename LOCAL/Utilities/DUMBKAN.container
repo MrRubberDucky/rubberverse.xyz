@@ -1,0 +1,24 @@
+[Unit]
+Description=DumbKan - Dumb Kanbard Board
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+[Container]
+Image=docker.io/dumbwareio/dumbkan:latest
+ContainerName=dumbkan
+# Secrets
+Secret=DUMBKAN_PIN,type=env,target=DUMBKAN_PIN
+# Environments
+Environment=PORT=9106
+# Volumes
+Volume=${HOME}/AppData/2_PERSIST/DUMBKAN:/app/data:rw,Z,U
+User=1000:1000
+UserNS=auto
+# Network
+Network=pasta:--ipv4-only
+PublishPort=127.0.0.1:9000:9106/tcp
+DNS=10.30.1.253
