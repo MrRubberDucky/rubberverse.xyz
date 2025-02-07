@@ -1,0 +1,62 @@
+[Unit]
+# Unit description
+Description=Vaultwarden
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+[Container]
+# Base
+Image=ghcr.io/dani-garcia/vaultwarden:latest-alpine
+ContainerName=vaultwarden
+Timezone=Europe/Warsaw
+# Secrets
+Secret=VAULTWARDEN_POSTGRESQL_URL,type=env,target=DATABASE_URL
+Secret=VAULTWARDEN_ADMIN_TOKEN,type=env,target=ADMIN_TOKEN
+Secret=VAULTWARDEN_INSTALLATION_ID,type=env,target=PUSH_INSTALLATION_ID
+Secret=VAULTWARDEN_INSTALLATION_KEY,type=env,target=PUSH_INSTALLATION_KEY
+Secret=VAULTWARDEN_ORG_CREATION_USERS,type=env,target=ORG_CREATION_USERS
+Secret=VAULTWARDEN_PASSWORD_ITERATIONS,type=env,target=PASSWORD_ITERATIONS
+# Environments
+# VW - Global Settings
+Environment=ENABLE_WEBSOCKET=true
+Environment=PUSH_ENABLED=true
+Environment=PUSH_RELAY_URI=https://api.bitwarden.eu
+Environment=PUSH_IDENTITY_URI=https://identity.bitwarden.eu
+# VW - General Settings
+Environment=DOMAIN=https://vault.localhost.rubberverse.xyz
+Environment=SENDS_ALLOWED=true
+Environment=TRASH_AUTO_DELETE_DAYS=90
+Environment=INCOMPLETE_2FA_TIME_LIMIT=3
+Environment=SIGNUPS_ALLOWED=false
+Environment=SIGNUPS_VERIFY=false
+Environment=INVITATIONS_ORG_NAME=rubberverse
+Environment=EMERGENCY_ACCESS_ALLOWED=true
+Environment=EMAIL_CHANGE_ALLOWED=false
+Environment=PASSWORD_HINTS_ALLOWED=false
+Environment=SHOW_PASSWORD_HINTS=false
+Environment=IP_HEADER=X-Real-IP
+Environment=ROCKET_ADDRESS=0.0.0.0
+Environment=ROCKET_PORT=8000
+Environment=ICON_SERVICE=internal
+Environment=DISABLE_ICON_DOWNLOAD=false
+Environment=TEMPLATES_FOLDER=/data/templates
+# VW - Client Settings
+Environment=EXPERIMENTAL_CLIENT_FEATURE_FLAGS=autofill-overlay,autofill-v2,fido2-vault-credentials,inline-menu-positioning-improvements,ssh-key-vault-item,ssh-agent
+# Rest
+Environment=I_REALLY_WANT_VOLATILE_STORAGE=true
+# Volumes
+Volume=${HOME}/AppData/2_PERSIST/VAULTWARDEN:/data:rw,Z
+# Labels
+AutoUpdate=registry
+NoNewPrivileges=true
+# Capabilities
+DropCapability=all
+# Container User
+User=1001:1001
+UserNS=auto
+# Pod
+Pod=Vaultwarden.pod
