@@ -1,0 +1,27 @@
+# This is to upload music for later cataloguing from my PC
+[Unit]
+Description=DumbDrop
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+[Container]
+# Base
+Image=docker.io/dumbwareio/dumbdrop:latest
+ContainerName=dumbdrop
+# Secrets
+Secret=DUMBKAN_PIN,type=env,target=DUMBDROP_PIN
+# Environments
+Environment=DUMBDROP_TITLE=RVS_Music
+Environment=MAX_FILE_SIZE=4096
+Environment=AUTO_UPLOAD=false
+# Mounts
+Mount=type=bind,src=/home/overseer/AppData/3_USER/Dumbdrop,destination=/app/uploads,z,U
+# Users
+User=1001:1001
+UserNS=auto
+# Ports
+PublishPort=127.0.0.1:9011:3000
