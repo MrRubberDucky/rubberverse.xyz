@@ -1,3 +1,0 @@
-[Pod]
-Network=FRESHRSS.network
-PublishPort=127.0.0.1:9002:9002

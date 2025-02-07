@@ -1,3 +1,0 @@
-[Pod]
-Network=READECK.network
-PublishPort=50000:50000/tcp

@@ -1,3 +1,0 @@
-[Pod]
-Network=PDS.network
-PublishPort=127.0.0.1:9003:9003
