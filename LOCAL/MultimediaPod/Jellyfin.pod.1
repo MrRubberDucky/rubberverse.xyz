@@ -1,0 +1,11 @@
+[Pod]
+Network=pasta:--ipv4-only
+PublishPort=0.0.0.0:1900:1900/udp
+PublishPort=0.0.0.0:7359:7359/udp
+# Jellyfin
+PublishPort=127.0.0.1:8096:8096/tcp
+# Feishin
+PublishPort=127.0.0.1:9180:9180
+# Polaris
+PublishPort=127.0.0.1:9009:9009
+AddHost=systemd-jellyfin:127.0.0.1
