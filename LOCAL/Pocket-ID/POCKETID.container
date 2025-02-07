@@ -1,0 +1,31 @@
+[Unit]
+Description=PocketID - OIDC authentication via Passkey
+Requires=POCKETID-PGSQL.service
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+[Container]
+Image=docker.io/stonith404/pocket-id:latest
+ContainerName=pocket-id
+# Secrets
+Secret=MAXMIND_GEOIP2,type=env,target=MAXMIND_LICENSE_KEY
+Secret=POCKETID_POSTGRES_URL,type=env,target=POSTGRES_CONNECTION_STRING
+# Environments
+Environment=HOST=0.0.0.0
+# This does nothing with User= set but meh.
+Environment=PUID=1001
+Environment=PGID=1001
+Environment=DB_PROVIDER=postgres
+Environment=PUBLIC_APP_URL=https://auth.localhost.rubberverse.xyz
+# Mounts
+Mount=type=bind,src=/home/overseer/AppData/2_PERSIST/POCKET-ID,dst=/app/backend/data,rw,U=true,Z
+# Labels
+AutoUpdate=registry
+NoNewPrivileges=true
+# User
+User=1001:1001
+Pod=PocketID.pod
