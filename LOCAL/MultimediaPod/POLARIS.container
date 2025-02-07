@@ -1,0 +1,25 @@
+[Unit]
+Description=Polaris - Self-Hosted Music Streaming Server
+# It's better at playing some music but it fails sometimes. Overall it's good.
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+[Container]
+Image=registry.gitlab.com/connectical/container/polaris:latest
+ContainerName=polaris
+# Environments
+Environment=POLARIS_PORT=9007
+# Volumes
+Volume=${HOME}/AppData/2_PERSIST/POLARIS/CACHE:/var/cache/polaris:Z,U
+Volume=${HOME}/AppData/2_PERSIST/POLARIS/DATA:/var/lib/polaris:Z,U
+# Mounts
+Mount=type=bind,source=/media/Music,destination=/media,z,ro=true
+# Labels
+AutoUpdate=registry
+NoNewPrivileges=true
+Pod=Jellyfin.pod
+UserNS=auto
