@@ -1,0 +1,7 @@
+[Network]
+Driver=bridge
+DisableDNS=true
+Internal=true
+Options=isolate=true
+NetworkName=VW_ISOLATED
+IPAMDriver=host-local
