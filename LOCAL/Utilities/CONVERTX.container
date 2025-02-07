@@ -1,0 +1,30 @@
+[Unit]
+Description=File conversion utility
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+[Container]
+# Base
+Image=ghcr.io/c4illin/convertx:latest
+ContainerName=convertx
+# Volumes
+Volume=${HOME}/AppData/2_PERSIST/CONVERTX:/app/data:rw,Z,U
+# Environments
+Environment=ACCOUNT_REGISTRATION=false
+Environment=HTTP_ALLOWED=true
+Environment=ALLOW_UNAUTHENTICATED=true
+Environment=AUTO_DELETE_EVERY_N_HOURS=1
+Environment=FFMPEG_ARGS=-hwaccel vaapi
+AddDevice=/dev/dri
+# Labels
+AutoUpdate=registry
+NoNewPrivileges=true
+# User
+User=1001:1001
+UserNS=auto
+Network=pasta:--ipv4-only
+PublishPort=127.0.0.1:9008:3000
