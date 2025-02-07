@@ -1,0 +1,41 @@
+[Unit]
+Description=PostgreSQL for Vaultwarden
+Before=VAULTWARDEN.service
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+[Container]
+# Base
+Image=docker.io/bitnami/postgresql:17.2.0-debian-12-r5
+ContainerName=vaultwarden-pgsql
+Timezone=Europe/Warsaw
+# Secrets
+Secret=VAULTWARDEN_USERNAME,type=env,target=POSTGRESQL_USERNAME
+Secret=VAULTWARDEN_PASSWORD,type=env,target=POSTGRESQL_PASSWORD
+# Environments
+Environment=POSTGRESQL_DATABASE=vwdatabase
+Environment=POSTGRESQL_TIMEZONE=Europe/Warsaw
+Environment=POSTGRESQL_LOG_TIMEZONE=Europe/Warsaw
+Environment=POSTGRESQL_REPLICATION_USE_PASSFILE=false
+# Mounts
+Mount=type=bind,src=/home/overseer/AppData/4_DATABASES/VAULTWARDEN_PGSQL,dst=/bitnami/postgresql,U=true,Z
+# Tmpfs
+Tmpfs=/dev/shm
+# Health check
+HealthCmd="pg_isready -d pocket-id"
+HealthInterval=5s
+HealthRetries=5
+HealthTimeout=5s
+Notify=healthy
+# Labels
+AutoUpdate=registry
+NoNewPrivileges=true
+# Capabilities
+DropCapability=all
+# User
+UserNS=auto
+Pod=Vaultwarden.pod
