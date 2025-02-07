@@ -1,0 +1,25 @@
+[Unit]
+Description=Feishin - A modern, self-hosted music player.
+
+[Service]
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+
+[Container]
+Image=ghcr.io/jeffvli/feishin:latest
+ContainerName=feishin
+# No default rootless user so have to workaround nginx permission issues like this
+Tmpfs=/var/cache/nginx:U
+Tmpfs=/var/run:U
+Volume=nginx-conf:/etc/nginx:rw,U
+Environment=SERVER_NAME=jellyfin
+Environment=SERVER_LOCK=true
+Environment=SERVER_TYPE=jellyfin
+Environment=SERVER_URL=player.localhost.rubberverse.xyz
+AutoUpdate=registry
+NoNewPrivileges=true
+Pod=Jellyfin.pod
+User=1001
+UserNS=auto
