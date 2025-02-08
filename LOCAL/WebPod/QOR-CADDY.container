@@ -18,10 +18,6 @@ Secret=BAUTH_USR,type=env,target=BAUTH_USR
 Environment=CONFIG_PATH=/app/configs/Caddyfile
 Environment=CADDY_ENVIRONMENT=prod
 Environment=FQDN=localhost.rubberverse.xyz
-# Normal Environments
-Environment=CONFIG_PATH=/app/configs/Caddyfile
-Environment=CADDY_ENVIRONMENT=prod
-Environment=FQDN=localhost.rubberverse.xyz
 # Volumes - Configs
 Volume=${HOME}/AppData/1_CONFIGS/GlobalConfig:/app/configs/GlobalConfig:ro,Z
 Volume=${HOME}/AppData/1_CONFIGS/ImportSnippets:/app/configs/ImportSnippets:ro,Z
