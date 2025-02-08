@@ -1,0 +1,215 @@
+# =============================================
+# SRV records
+# =============================================
+|_vlmcs._tcp.kms.localhost.rubberverse.xyz^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 kms.localhost.rubberverse.xyz
+# Would use DNS rewrite but then it kicks in too fast, making SRV record useless
+||/localhost.rubberverse.xyz/^$dnsrewrite=10.30.1.10
+
+# =================================
+# LDPlayer
+# =================================
+ad.ldplayer.net^
+en.ldplayer.net^
+cdn.ldplayer.net^
+encdn.ldplayer.com^
+advertise.ldplayer.net^
+middledata.ldplayer.net^
+apiid.ldmnq.com^
+apien.ldmnq.com^
+ldcdn.ldmnq.com^
+encdn.ldmnq.com^
+storeen.ldmnq.com^
+usersdk.ldmnq.com^
+adabdapi.ldmnq.com^
+appstore.ldmnq.com^
+middledata.ldmnq.com^
+api.ld-space.com^
+||ias.tencent-cloud.net^
+openrcv.baidu.com^
+loc.map.baidu.com^
+dldgmpfyeblzc.cloudfront.net^
+dn2sifz9m7tkk.cloudfront.net^
+de2pmm85odupd.cloudfront.net^
+dkf29paj6y8sk.cloudfront.net^
+d19przo9d3f9zk.cloudfront.net^
+d330if318qxsm2.cloudfront.net^
+d3p6x1jquzbe0c.cloudfront.net^
+p-sgsg00.kxcdn.com^
+android.bugly.qq.com^
+encdn.ldmnq.com.w.alikunlun.com^
+ins-o9iydzqn.ias.tencent-cloud.net^
+lden.oss-ap-southeast-1.aliyuncs.com^
+netease-publish-gdlgphs.w.alikunlun.com^
+advertise.ldplayer.net.a.lahuashanbx.com^
+alb-fc2psc581f288qx1e4.cn-shanghai.alb.aliyuncs.com^
+
+# =================================
+# BlueStacks
+# =================================
+||now.gg^$important
+eb.bluestacks.com^
+www.bluestacks.com^
+cloud.bluestacks.com^
+cdn-bgp.bluestacks.com^
+cdn-www.bluestacks.com^
+cdn-icon.bluestacks.com^
+ak-build.bluestacks.com^
+
+# =================================
+# Microsoft calls, prob telemetry?
+# =================================
+v10.events.data.microsoft.com^
+watson.events.data.microsoft.com^
+
+# =================================
+# Misc
+# =================================
+mdm.asus.com^
+track.kueezrtb.com^
+gtrack.kueezrtb.com^
+andknuckles.frankerfacez.com^
+jm-msg-global.aliexpress.com^
+||iionads.com^
+
+# ==========================================
+# LG WebOS domain whitelist, appstore fix
+# ==========================================
+@@pl.lgeapi.com
+@@pl.lgtvsdp.com
+@@ngfts.lge.com
+@@aic-ngfts.lge.com
+@@pl.ibs.lgappstv.com
+@@pl.rdx2.lgtvsdp.com
+@@pl.info.lgsmartad.com
+@@pl.emp.lgsmartplatform.com
+@@aic.cdpsvc.lgtvcommon.com
+
+# =================================
+# LG WebOS domain blacklist
+# =================================
+||cdn77.uphor.com
+||ad.lgsmartad.com
+||cdn.boosteroid.com
+||pl.ad.lgsmartad.com
+
+# =======================================
+# Nox Player Tracking + Ads + Telemetry
+# =======================================
+||bignox.com^$important
+||trnox.com^$important
+||umeng.com^
+||tapas.net^
+||yeshen.com^
+||shifen.com^
+||bceapp.com^
+||duapps.com^
+||kunlungr.com^
+||sinaapp.com^
+||applinzi.com^
+||talkingdata.net^
+
+# =======================================
+# Google STUN servers that Nox seems to be using for... something?
+# =======================================
+||stun.l.google.com
+||noxinfluencer.net^
+||apptrackerlink.com^
+||appmeasurements.com^
+hmma.baidu.com
+googleclubstore.com
+sdk.open.inc2.igexin.com
+
+# =============================================
+# Random Samsung phone calls, prob weird apps
+# =============================================
+||www.tizen.org^
+||omlbaftroofj.com^$important
+||similargrocery.pro^$important
+
+# =============================================
+# Huawei tablet remote calls
+# =============================================
+||hicloud.com^
+||cloud.huawei.com^
+
+# =============================================
+# Whitelist
+# =============================================
+@@||vlscppe.microsoft.com
+@@||www.duckdns.org^
+@@||www.umami.is
+@@||umami.is
+@@||steganos.com
+# Needed for EGS mobile app
+@@||tracking.epicgames.com
+@@||sentry.io
+
+# =============================================
+# Personal Blacklist
+# =============================================
+||www.facebook.com^$client='10.50.1.10'
+||graph.facebook.com^$client='10.50.1.10'
+||facebook.com^$client='10.50.1.10'
+||cashrocketlaunch.com^
+||widget.kapa.ai^
+# Don't really need it to talk externally, only locally
+stun.syncthing.net^
+discovery-lookup.syncthing.net
+discovery-announce-v6.syncthing.net^
+
+# =============================================
+# Nintendo Switch
+# =============================================
+sun.hac.lp1.d4c.nintendo.net^
+aqua.hac.lp1.d4c.nintendo.net^
+beach.hac.lp1.eshop.nintendo.net:443^
+receive-lp1.dg.srv.nintendo.net:443^
+receive-lp1.er.srv.nintendo.net:443^
+||nintendo.com^
+||nintendo.net^
+||nintendo.jp^
+||nintendo.co.jp^
+||nintendo.co.uk^
+||nintendo-europe.com^
+||nintendowifi.net^
+||nintendo.es^
+||nintendo.co.kr^
+||nintendo.tw^
+||nintendo.com.hk^
+||nintendo.com.au^
+||nintendo.co.nz^
+||nintendo.at^
+||nintendo.be^
+||nintendods.cz^
+||nintendo.dk^
+||nintendo.de^
+||nintendo.fi^
+||nintendo.fr^
+||nintendo.gr^
+||nintendo.hu^
+||nintendo.it^
+||nintendo.nl^
+||nintendo.no^
+||nintendo.pt^
+||nintendo.ru^
+||nintendo.co.za^
+||nintendo.se^
+||nintendo.ch^
+||nintendo.pl^
+||nintendoswitch.com^
+||nintendoswitch.com.cn^
+||nintendoswitch.cn^
+
+# =============================================
+# Rewrite local domains so they don't end up being queried by upstream if they don't exist locally
+# =============================================
+/^[^\.]*$/$dnsrewrite=NXDOMAIN
+||lan^$dnsrewrite=NXDOMAIN
+||bind^$dnsrewrite=NXDOMAIN
+||invalid^$dnsrewrite=NXDOMAIN
+||local^$dnsrewrite=NXDOMAIN
+||localhost^$dnsrewrite=NXDOMAIN
+||onion^$dnsrewrite=NXDOMAIN
+||test^$dnsrewrite=NXDOMAIN
+||30.10.in-addr.arpa^$dnsrewrite=NXDOMAIN
+||10.10.in-addr.arpa^$dnsrewrite=NXDOMAIN
