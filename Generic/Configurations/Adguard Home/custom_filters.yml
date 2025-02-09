@@ -212,6 +212,7 @@ receive-lp1.er.srv.nintendo.net:443^
 /^[^\.]*$/$dnsrewrite=NXDOMAIN
 ||lan^$dnsrewrite=NXDOMAIN
 ||bind^$dnsrewrite=NXDOMAIN
+||internal^$dnsrewrite=NXDOMAIN
 ||invalid^$dnsrewrite=NXDOMAIN
 ||local^$dnsrewrite=NXDOMAIN
 ||localhost^$dnsrewrite=NXDOMAIN
