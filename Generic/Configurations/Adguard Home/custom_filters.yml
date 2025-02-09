@@ -5,8 +5,9 @@
 # SRV records
 # =============================================
 |_vlmcs._tcp.kms.localhost.rubberverse.xyz^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 kms.localhost.rubberverse.xyz
-|_vlmcs._tcp.kms.rubberverse.internal^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 kms.localhost.rubberverse.xyz
-|_vlmcs._tcp.kms.rvs.internal^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 kms.localhost.rubberverse.xyz
+|_vlmcs._tcp.adv10.rvs.internal^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 kms.localhost.rubberverse.xyz
+|_vlmcs._tcp.mgmt.rvs.internal^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 kms.localhost.rubberverse.xyz
+|_vlmcs._tcp^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 kms.localhost.rubberverse.xyz
 # Would use DNS rewrite but then it kicks in too fast, making SRV record useless
 ||/localhost.rubberverse.xyz/^$dnsrewrite=10.30.1.10
 
