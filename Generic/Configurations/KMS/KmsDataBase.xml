@@ -547,7 +547,7 @@
             <Activate KmsItem="02000000-0000-0000-0000-000000000000" />
         </CsvlkItem>
         
-        <CsvlkItem DisplayName="Office 2024" VlmcsdIndex="6" GroupId="206" MinKeyId="571000000" MaxKeyId="590999999" IniFileName="Office2024" EPid="05426-00206-456-03-1033-9100.0000-2602024" Id="f3d89bbf-c0ec-47ce-a8fa-e5a5f97e447f" InvalidWinBuild="[0,1]">
+        <CsvlkItem DisplayName="Office 2024" VlmcsdIndex="6" GroupId="206" MinKeyId="666000000" MaxKeyId="685999999" IniFileName="Office2024" Id="f3d89bbf-c0ec-47ce-a8fa-e5a5f97e447f" InvalidWinBuild="[0,1]">
             <Activate KmsItem="1b4db7eb-4057-5ddf-91e0-36dec72071f5" />
         </CsvlkItem>
 
