@@ -10,6 +10,8 @@ https://github.com/Py-KMS-Organization/py-kms/pulls?q=is%3Apr+is%3Aclosed
 https://github.com/Py-KMS-Organization/py-kms/issues
 
 Rewrite for later use, needs to be done fully.
+De-duplicated entries, Server editions don't need Vista-Win10 KmsItems in order to activate against them.
+Not sure why it's done this way but so far stuff seems to activate fine, needs further testing.
 -->
 
 
