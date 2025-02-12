@@ -16,6 +16,7 @@ Not sure why it's done this way but so far stuff seems to activate fine, needs f
 
 
 <KmsData xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Version="2.0" Author="Hotbird64+Contribs" xsi:noNamespaceSchemaLocation="KmsDataBase.xsd">
+    
     <WinBuilds>
         <!-- LM refuses 3-digit build numbers
         <WinBuild BuildNumber="528" DisplayName="Windows NT 3.1" PlatformId="55041"/>
@@ -59,6 +60,7 @@ Not sure why it's done this way but so far stuff seems to activate fine, needs f
         <WinBuild BuildNumber="22621" ReleaseDate="2022-05-11T00:00:00Z" DisplayName="Windows 11 22H2" PlatformId="3612" UsesNDR64="true"/>
         <WinBuild BuildNumber="22631" ReleaseDate="2023-10-31:00:00:00Z" DisplayName="Windows 11 23H2" PlatformId="3612" UsesNDR64="true"/>
         <WinBuild BuildNumber="26100" ReleaseDate="2024-11-01T00:00:00Z" DisplayName="Windows 11 24H2 / Windows Server 2025" PlatformId="3612" UseForEpid="true" MayBeServer="true" UsesNDR64="true"/>
+    
     </WinBuilds>
 
     <CsvlkItems>
@@ -408,7 +410,9 @@ Not sure why it's done this way but so far stuff seems to activate fine, needs f
 -->
 
     <AppItems>
+        
         <AppItem DisplayName="Windows" VlmcsdIndex="0" Id="55c92734-d682-4d71-983e-d6ec3f16059f" MinActiveClients="50">
+            
             <KmsItem DisplayName="Windows Server 2025" Id="4b83307d-7788-50ff-8d1f-1861915bdb9d" DefaultKmsProtocol="6.0" NCountPolicy="5">
                 <SkuItem DisplayName="Windows Server 2025 Datacenter" Id="c052f164-cdf6-409a-a0cb-853ba0f0f55a" Gvlk="D764K-2NDRG-47T6Q-P8T8W-YP6DF" />
                 <SkuItem DisplayName="Windows Server 2025 Standard" Id="7dc26449-db21-4e09-ba37-28f2958506a6" Gvlk="TVRH6-WHNXV-R9WG3-9XRFY-MY832" />
