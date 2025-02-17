@@ -17,6 +17,8 @@ Environment=LOGLEVEL=INFO
 Environment=HWID=RANDOM
 # Volumes
 Volume=${HOME}/AppData/2_PERSIST/PYKMS:/home/py-kms/db:U,z
+# Updated KMS Database file
+Volume=${HOME}/AppData/3_USER/KmsDataBase.xml:/home/py-kms/KmsDataBase.xml:ro,Z
 # Needed for private IPC
 Tmpfs=/dev/shm
 # Networks
@@ -25,6 +27,5 @@ Network=pasta:--ipv4-only
 PublishPort=0.0.0.0:1688:1688/tcp
 # Dashboard port
 PublishPort=127.0.0.1:9012:8080/tcp
-# It's turned off system-wide but doing it here just in case.
-Sysctl=net.ipv6.conf.default.disable_ipv6=1
-Sysctl=net.ipv6.conf.lo.disable_ipv6=1
+# User
+User=1001:1001
