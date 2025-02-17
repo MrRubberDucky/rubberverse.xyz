@@ -1,0 +1,87 @@
+<Configuration ID="1e1d01d8-558a-42fc-9a11-4a64ae402221">
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2024">
+    <Product ID="ProPlus2024Volume" PIDKEY="XJ2XN-FW8RK-P4HMP-DKDBV-GCVGB">
+      <Language ID="MatchOS" />
+      <Language ID="MatchPreviousMSI" />
+      <ExcludeApp ID="Lync" />
+      <ExcludeApp ID="OneDrive" />
+    </Product>
+    <Product ID="VisioPro2024Volume" PIDKEY="B7TN8-FJ8V3-7QYCP-HQPMV-YY89G">
+      <Language ID="MatchOS" />
+      <Language ID="MatchPreviousMSI" />
+      <ExcludeApp ID="Lync" />
+      <ExcludeApp ID="OneDrive" />
+    </Product>
+    <Product ID="ProjectPro2024Volume" PIDKEY="FQQ23-N4YCY-73HQ3-FM9WC-76HF4">
+      <Language ID="MatchOS" />
+      <Language ID="MatchPreviousMSI" />
+      <ExcludeApp ID="Lync" />
+      <ExcludeApp ID="OneDrive" />
+    </Product>
+    <Product ID="ProofingTools">
+      <Language ID="en-us" />
+      <Language ID="ja-jp" />
+      <Language ID="pl-pl" />
+    </Product>
+  </Add>
+  <Property Name="SharedComputerLicensing" Value="0" />
+  <Property Name="FORCEAPPSHUTDOWN" Value="FALSE" />
+  <Property Name="DeviceBasedLicensing" Value="0" />
+  <Property Name="SCLCacheOverride" Value="0" />
+  <Property Name="AUTOACTIVATE" Value="1" />
+  <Updates Enabled="TRUE" />
+  <RemoveMSI />
+  <AppSettings>
+    <User Key="software\microsoft\office\16.0\common\toolbars" Name="screentipscheme" Value="2" Type="REG_DWORD" App="office16" Id="L_ShowScreenTips" />
+    <User Key="software\microsoft\office\16.0\common\toolbars" Name="tooltips" Value="0" Type="REG_DWORD" App="office16" Id="L_DoNotShowScreenTipsontoolbars" />
+    <User Key="software\microsoft\office\16.0\common" Name="sendcustomerdata" Value="0" Type="REG_DWORD" App="office16" Id="L_Sendcustomerdata" />
+    <User Key="software\microsoft\office\16.0\common\internet" Name="useonlinecontent" Value="0" Type="REG_DWORD" App="office16" Id="L_Onlinecontentoptions" />
+    <User Key="software\microsoft\office\16.0\common\internet" Name="useconversionservices" Value="0" Type="REG_DWORD" App="office16" Id="L_ConversionServicesoptions" />
+    <User Key="software\microsoft\office\16.0\common\ptwatson" Name="ptwoptin" Value="0" Type="REG_DWORD" App="office16" Id="L_ImproveProofingTools" />
+    <User Key="software\microsoft\office\16.0\common\general" Name="shownfirstrunoptin" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableOptinWizard" />
+    <User Key="software\microsoft\office\16.0\common" Name="qmenable" Value="0" Type="REG_DWORD" App="office16" Id="L_EnableCustomerExperienceImprovementProgram" />
+    <User Key="software\microsoft\office\common\security" Name="disableallactivex" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableAllActiveX" />
+    <User Key="software\microsoft\office\16.0\common\languageresources\enabledlanguages" Name="pl-pl" Value="3" Type="REG_DWORD" App="office16" Id="L_Polish" />
+    <User Key="software\microsoft\office\16.0\common\languageresources" Name="installlanguage" Value="1045" Type="REG_DWORD" App="office16" Id="L_PrimaryEditingLanguage" />
+    <User Key="software\microsoft\office\16.0\common\languageresources" Name="preferrededitinglanguage" Value="pl-PL" Type="REG_DWORD" App="office16" Id="L_PrimaryEditingLanguage" />
+    <User Key="software\microsoft\office\16.0\common\services\fax" Name="nofax" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableFaxOverInternetfeature" />
+    <User Key="software\microsoft\office\16.0\common\shipasserts" Name="disableshipasserts" Value="1" Type="REG_DWORD" App="office16" Id="L_StopReportingNonCriticalErrors" />
+    <User Key="software\microsoft\office\16.0\common\alerts" Name="noalertreporting" Value="1" Type="REG_DWORD" App="office16" Id="L_StopReportingErrorMessages" />
+    <User Key="software\microsoft\office\16.0\common\roaming" Name="roamingsettingsdisabled" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableOfficeUserRoamingSettings" />
+    <User Key="software\microsoft\office\16.0\osm" Name="enableupload" Value="0" Type="REG_DWORD" App="office16" Id="L_OfficeInventoryAgentUpload" />
+    <User Key="software\microsoft\office\16.0\osm" Name="enablefileobfuscation" Value="1" Type="REG_DWORD" App="office16" Id="L_OfficeInventoryAgentFilemetadataObfuscation" />
+    <User Key="software\microsoft\office\16.0\osm" Name="enablelogging" Value="0" Type="REG_DWORD" App="office16" Id="L_EnableLogging" />
+    <User Key="software\microsoft\office\16.0\common\licensing" Name="hidemanageaccountlink" Value="1" Type="REG_DWORD" App="office16" Id="L_HideManageAccountLink" />
+    <User Key="software\microsoft\office\16.0\common\signin" Name="signinoptions" Value="3" Type="REG_DWORD" App="office16" Id="L_SignInOptions" />
+    <User Key="software\microsoft\office\16.0\firstrun" Name="disablemovie" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableMovie" />
+    <User Key="software\microsoft\office\16.0\excel" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationExcel" />
+    <User Key="software\microsoft\office\16.0\powerpoint" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationPowerPoint" />
+    <User Key="software\microsoft\office\16.0\visio" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationVisio" />
+    <User Key="software\microsoft\office\16.0\outlook" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationOutlook" />
+    <User Key="software\microsoft\office\16.0\onenote" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationOneNote" />
+    <User Key="software\microsoft\office\16.0\word" Name="dontshowwhatsnew" Value="1" Type="REG_DWORD" App="office16" Id="L_DontShowWhatsNewInformationWord" />
+    <User Key="software\microsoft\office\16.0\common" Name="linkedin" Value="0" Type="REG_DWORD" App="office16" Id="L_AllowLinkedInFeatures" />
+    <User Key="software\microsoft\office\readinesstoolkit" Name="enableusageagent" Value="0" Type="REG_DWORD" App="office16" Id="L_OfficeReadinessToolkitEnableUsageAgent" />
+    <User Key="software\microsoft\office\16.0\common\general" Name="disablecomingsoon" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableComingSoon" />
+    <User Key="software\microsoft\office\16.0\common\security\labels" Name="aipexception" Value="0" Type="REG_DWORD" App="office16" Id="L_AIPException" />
+    <User Key="software\microsoft\office\16.0\common" Name="default ui theme" Value="4" Type="REG_DWORD" App="office16" Id="L_DefaultUIThemeUser" />
+    <User Key="software\microsoft\office\16.0\common" Name="insiderslabbehavior" Value="2" Type="REG_DWORD" App="office16" Id="L_OfficeInsiderUserExperience" />
+    <User Key="software\microsoft\office\16.0\common\personalization" Name="homeuseprogram" Value="0" Type="REG_DWORD" App="office16" Id="L_PersonalizationHomeUseProgram" />
+    <User Key="software\microsoft\office\16.0\common\links" Name="browserchoice" Value="0" Type="REG_DWORD" App="office16" Id="L_M365LinksBrowserChoice" />
+    <User Key="software\microsoft\office\16.0\common\ai" Name="disabletraining" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableTrainingUser" />
+    <User Key="software\microsoft\office\16.0\common\ai" Name="disabletrainingofadaptivefloatie" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableTrainingOfAdaptiveFloatieUser" />
+    <User Key="software\microsoft\office\16.0\common\ai" Name="disabletraining" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableTrainingMachine" />
+    <User Key="software\microsoft\office\16.0\common\ai" Name="disabletrainingofadaptivefloatie" Value="1" Type="REG_DWORD" App="office16" Id="L_DisableTrainingOfAdaptiveFloatieMachine" />
+    <User Key="software\microsoft\office\16.0\common\diagnostics" Name="configuregetdiagnostics" Value="2" Type="REG_DWORD" App="office16" Id="L_ConfigureGetDiagnostics" />
+    <User Key="software\microsoft\office\16.0\excel\options" Name="defaultformat" Value="51" Type="REG_DWORD" App="excel16" Id="L_SaveExcelfilesas" />
+    <User Key="software\microsoft\office\16.0\excel\security\external content" Name="disableddeserverlookup" Value="0" Type="REG_DWORD" App="excel16" Id="L_DisableDDEServerLookup" />
+    <User Key="software\microsoft\office\16.0\onenote\options\other" Name="msoridonenotedisablememorywindow" Value="1" Type="REG_DWORD" App="onent16" Id="L_TurnOffNewStickyNotesInOneNote" />
+    <User Key="software\microsoft\office\16.0\outlook\contact" Name="downloadphotosfromad" Value="0" Type="REG_DWORD" App="outlk16" Id="L_DoNotDownloadPhotosFromTheActiveDirectory" />
+    <User Key="software\microsoft\office\16.0\outlook\autodiscover" Name="zeroconfigexchange" Value="0" Type="REG_DWORD" App="outlk16" Id="L_AutomaticallyConfigureProfileBasedOnActive" />
+    <User Key="software\microsoft\office\16.0\outlook\autodiscover" Name="zeroconfigexchangeonce" Value="0" Type="REG_DWORD" App="outlk16" Id="L_AutomaticallyConfigureProfileBasedOnActiveOnce" />
+    <User Key="software\microsoft\office\outlook\socialconnector" Name="downloaddetailsfromad" Value="0" Type="REG_DWORD" App="outlk16" Id="L_DoNotDownloadPhotosFromActiveDirectory" />
+    <User Key="software\microsoft\office\16.0\powerpoint\options" Name="defaultformat" Value="27" Type="REG_DWORD" App="ppt16" Id="L_SavePowerPointfilesas" />
+    <User Key="software\microsoft\office\16.0\word\options" Name="defaultformat" Value="" Type="REG_SZ" App="word16" Id="L_SaveWordfilesas" />
+  </AppSettings>
+  <Display Level="Full" AcceptEULA="TRUE" />
+</Configuration>
