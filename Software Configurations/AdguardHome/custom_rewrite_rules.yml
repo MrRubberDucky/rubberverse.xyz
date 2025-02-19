@@ -1,13 +1,13 @@
-# This is not a real .yml file
-# This is used in Custom Filtering Rules in Adguard Home
-
 # =============================================
 # SRV records
 # =============================================
-|_vlmcs._tcp.kms.localhost.rubberverse.xyz^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 kms.localhost.rubberverse.xyz
-|_vlmcs._tcp.adv10.rvs.internal^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 kms.localhost.rubberverse.xyz
-|_vlmcs._tcp.mgmt.rvs.internal^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 kms.localhost.rubberverse.xyz
-|_vlmcs._tcp^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 kms.localhost.rubberverse.xyz
+# Office / Windows
+|_vlmcs._tcp.kms.localhost.rubberverse.xyz^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 10.30.1.10
+|_vlmcs._tcp.adv10.rvs.internal^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 10.30.1.10
+|_vlmcs._tcp.mgmt.rvs.internal^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 10.30.1.10
+|_vlmcs._tcp.kms.rvs.internal^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 10.30.1.10
+# This is needed in case host doesn't have a nameserver supplied to it via dhcp
+|_vlmcs._tcp^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 10.30.1.10
 # Would use DNS rewrite but then it kicks in too fast, making SRV record useless
 ||/localhost.rubberverse.xyz/^$dnsrewrite=10.30.1.10
 
@@ -139,14 +139,15 @@ sdk.open.inc2.igexin.com
 ||cloud.huawei.com^
 
 # =============================================
-# Whitelist
+# Whitelsit
 # =============================================
 @@||vlscppe.microsoft.com
 @@||www.duckdns.org^
+@@||spaghettisauce.duckdns.org^
 @@||www.umami.is
 @@||umami.is
 @@||steganos.com
-# Needed for EGS mobile app
+# EGS mobile fix
 @@||tracking.epicgames.com
 @@||sentry.io
 
@@ -155,13 +156,9 @@ sdk.open.inc2.igexin.com
 # =============================================
 ||www.facebook.com^$client='10.50.1.10'
 ||graph.facebook.com^$client='10.50.1.10'
-||facebook.com^$client='10.50.1.10'
+||star-mini.c10r.facebook.com^$client='10.50.1.10'
 ||cashrocketlaunch.com^
 ||widget.kapa.ai^
-# Don't really need it to talk externally, only locally
-stun.syncthing.net^
-discovery-lookup.syncthing.net
-discovery-announce-v6.syncthing.net^
 
 # =============================================
 # Nintendo Switch
@@ -206,17 +203,32 @@ receive-lp1.er.srv.nintendo.net:443^
 ||nintendoswitch.com.cn^
 ||nintendoswitch.cn^
 
-# =============================================
-# Rewrite local domains so they don't end up being queried by upstream if they don't exist locally
-# =============================================
+# I do not want Syncthing external discovery, only via LAN
+||stun.syncthing.net^$important
+discovery-announce-v6.syncthing.net
+discovery-lookup.syncthing.net
+
+# Redirect LAN lookups to NXDOMAIN instead of querying upstream
 /^[^\.]*$/$dnsrewrite=NXDOMAIN
 ||lan^$dnsrewrite=NXDOMAIN
 ||bind^$dnsrewrite=NXDOMAIN
-||internal^$dnsrewrite=NXDOMAIN
 ||invalid^$dnsrewrite=NXDOMAIN
 ||local^$dnsrewrite=NXDOMAIN
 ||localhost^$dnsrewrite=NXDOMAIN
 ||onion^$dnsrewrite=NXDOMAIN
 ||test^$dnsrewrite=NXDOMAIN
+
+# There are no PTR records for these IP addresses
 ||30.10.in-addr.arpa^$dnsrewrite=NXDOMAIN
 ||10.10.in-addr.arpa^$dnsrewrite=NXDOMAIN
+
+# Rewrite popular TLDs that spam often to respond with NXDOMAIN
+||com.adv10.rvs.internal^$dnsrewrite=NXDOMAIN
+||net.adv10.rvs.internal^$dnsrewrite=NXDOMAIN
+||gg.adv10.rvs.internal^$dnsrewrite=NXDOMAIN
+||xyz.adv10.rvs.internal^$dnsrewrite=NXDOMAIN
+||pl.adv10.rvs.internal^$dnsrewrite=NXDOMAIN
+||jp.adv10.rvs.internal^$dnsrewrite=NXDOMAIN
+
+# Who knows what this is for
+||dns.msftncsi.com^$important
