@@ -9,7 +9,7 @@
 # This is needed in case host doesn't have a nameserver supplied to it via dhcp
 |_vlmcs._tcp^$dnstype=SRV,dnsrewrite=NOERROR;SRV;0 100 1688 10.30.1.10
 # Would use DNS rewrite but then it kicks in too fast, making SRV record useless
-||/localhost.rubberverse.xyz/^$dnsrewrite=10.30.1.10
+||localhost.rubberverse.xyz^$dnsrewrite=10.30.1.10
 
 # =================================
 # LDPlayer
